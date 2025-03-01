@@ -35,6 +35,18 @@ const i18n = {
 
 let currentLang = 'ru';
 
+// Функция блокировки игрового поля
+function lockGameField() {
+    cells.forEach(cell => cell.setAttribute('disabled', true));
+    console.log('Field locked.');
+}
+
+// Функция разблокировки игрового поля
+function unlockGameField() {
+    cells.forEach(cell => cell.removeAttribute('disabled'));
+    console.log('Field unlocked.');
+}
+
 function handleCellClick(event) {
     const clickedCell = event.target;
     const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
@@ -48,20 +60,19 @@ function handleCellClick(event) {
         return;
     }
 
+    // Блокируем поле перед обновлением доски
+    lockGameField();
+
+    // Обновляем доску и проверяем результат
     updateBoard(clickedCell, clickedCellIndex);
     handleResultValidation();
 
-    // Блокируем поле сразу после хода игрока
-    lockGameField();
-    console.log('Field locked after player move.');
-
-    // Если игра против компьютера и текущий игрок — компьютер
+    // Если игра против компьютера и игра ещё активна
     if (aiMode && gameActive && currentPlayer === computerRole) {
         console.log('AI is making a move...');
         setTimeout(aiMove, 500); // Добавляем задержку для ИИ
     } else {
         unlockGameField(); // Разблокируем поле, если играем вдвоем
-        console.log('Field unlocked for two-player mode.');
     }
 }
 
@@ -149,8 +160,11 @@ function aiMove() {
         updateBoard(cells[move], move);
         handleResultValidation();
     }
-    unlockGameField(); // Разблокируем поле после хода компьютера
-    console.log('Field unlocked after AI move.');
+
+    // Разблокируем поле после хода компьютера
+    if (gameActive) {
+        unlockGameField();
+    }
 }
 
 function minimax(newBoard, depth, isMaximizing) {
@@ -235,16 +249,6 @@ class SoundManager {
 }
 
 const soundManager = new SoundManager();
-
-// Функция блокировки игрового поля
-function lockGameField() {
-    cells.forEach(cell => cell.setAttribute('disabled', true));
-}
-
-// Функция разблокировки игрового поля
-function unlockGameField() {
-    cells.forEach(cell => cell.removeAttribute('disabled'));
-}
 
 cells.forEach(cell => cell.addEventListener('click', handleCellClick));
 resetButton.addEventListener('click', resetGame);
