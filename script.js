@@ -38,12 +38,18 @@ let currentLang = 'ru';
 function handleCellClick(event) {
     const clickedCell = event.target;
     const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
-    if (board[clickedCellIndex] !== '' || !gameActive) {
+
+    // Проверяем, можно ли сделать ход
+    if (board[clickedCellIndex] !== '' || !gameActive || currentPlayer !== playerRole) {
         return;
     }
+
     updateBoard(clickedCell, clickedCellIndex);
     handleResultValidation();
+
+    // Если игра против компьютера и текущий игрок — компьютер
     if (aiMode && gameActive && currentPlayer === computerRole) {
+        lockGameField(); // Блокируем поле перед ходом компьютера
         setTimeout(aiMove, 500); // Добавляем задержку для ИИ
     }
 }
@@ -100,6 +106,7 @@ function resetGame() {
     board = ['', '', '', '', '', '', '', '', ''];
     currentPlayer = playerRole;
     gameActive = true;
+    unlockGameField(); // Разблокируем поле при перезапуске игры
     cells.forEach(cell => {
         cell.textContent = '';
         cell.removeAttribute('disabled');
@@ -126,6 +133,7 @@ function aiMove() {
         updateBoard(cells[move], move);
         handleResultValidation();
     }
+    unlockGameField(); // Разблокируем поле после хода компьютера
 }
 
 function minimax(newBoard, depth, isMaximizing) {
@@ -210,6 +218,16 @@ class SoundManager {
 }
 
 const soundManager = new SoundManager();
+
+// Функция блокировки игрового поля
+function lockGameField() {
+    cells.forEach(cell => cell.setAttribute('disabled', true));
+}
+
+// Функция разблокировки игрового поля
+function unlockGameField() {
+    cells.forEach(cell => cell.removeAttribute('disabled'));
+}
 
 cells.forEach(cell => cell.addEventListener('click', handleCellClick));
 resetButton.addEventListener('click', resetGame);
