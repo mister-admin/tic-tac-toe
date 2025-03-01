@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Крестики-нолики</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1 id="gameTitle">Крестики-нолики</h1>
+    <div class="mode-selector">
+        <label>
+            <input type="radio" name="mode" value="ai" checked> Против компьютера
+        </label>
+        <label>
+            <input type="radio" name="mode" value="twoPlayers"> Вдвоем
+        </label>
+    </div>
+    <div class="player-selector">
+        <label>
+            <input type="radio" name="player" value="X" checked> Играть за X
+        </label>
+        <label>
+            <input type="radio" name="player" value="O"> Играть за O
+        </label>
+    </div>
+    <div class="theme-selector">
+        <label>
+            <input type="radio" name="theme" value="classic" checked> ☀️
+        </label>
+        <label>
+            <input type="radio" name="theme" value="dark"> 🌙
+        </label>
+    </div>
+    <div class="lang-selector">
+        <label>
+            <input type="radio" name="lang" value="ru" checked> RU
+        </label>
+        <label>
+            <input type="radio" name="lang" value="en"> EN
+        </label>
+    </div>
+    <div class="game-container">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+    </div>
+    <div class="controls">
+        <button id="reset" data-i18n="restart">Начать заново</button>
+    </div>
+
+    <!-- Звуковые эффекты -->
+    <audio id="moveSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+    <audio id="winSound" src="https://www.soundjay.com/misc/success-01.wav" preload="auto"></audio>
+    <audio id="drawSound" src="https://www.soundjay.com/misc/fail-01.wav" preload="auto"></audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
