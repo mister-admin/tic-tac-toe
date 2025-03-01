@@ -39,8 +39,12 @@ function handleCellClick(event) {
     const clickedCell = event.target;
     const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
 
+    console.log(`Clicked cell index: ${clickedCellIndex}`);
+    console.log(`Current player: ${currentPlayer}, Game active: ${gameActive}`);
+
     // Проверяем, можно ли сделать ход
     if (board[clickedCellIndex] !== '' || !gameActive || currentPlayer !== playerRole) {
+        console.log('Invalid move. Returning...');
         return;
     }
 
@@ -49,12 +53,15 @@ function handleCellClick(event) {
 
     // Блокируем поле сразу после хода игрока
     lockGameField();
+    console.log('Field locked after player move.');
 
     // Если игра против компьютера и текущий игрок — компьютер
     if (aiMode && gameActive && currentPlayer === computerRole) {
+        console.log('AI is making a move...');
         setTimeout(aiMove, 500); // Добавляем задержку для ИИ
     } else {
         unlockGameField(); // Разблокируем поле, если играем вдвоем
+        console.log('Field unlocked for two-player mode.');
     }
 }
 
@@ -63,6 +70,7 @@ function updateBoard(clickedCell, index) {
     clickedCell.textContent = currentPlayer;
     clickedCell.setAttribute('disabled', true);
     soundManager.play('move');
+    console.log(`Updated board at index ${index} with ${currentPlayer}.`);
 }
 
 function handleResultValidation() {
@@ -85,6 +93,7 @@ function handleResultValidation() {
         gameActive = false;
         highlightWinningCombo();
         soundManager.play('win');
+        console.log(`${currentPlayer} wins!`);
         return;
     }
     let roundDraw = !board.includes('');
@@ -92,9 +101,11 @@ function handleResultValidation() {
         announce("Ничья!");
         gameActive = false;
         soundManager.play('draw');
+        console.log('Game ended in a draw.');
         return;
     }
     handlePlayerChange();
+    console.log(`Switched player to ${currentPlayer}.`);
 }
 
 function handlePlayerChange() {
@@ -117,6 +128,7 @@ function resetGame() {
         cell.classList.remove('win-cell');
     });
     announce(i18n[currentLang].gameTitle);
+    console.log('Game reset.');
 }
 
 function aiMove() {
@@ -138,6 +150,7 @@ function aiMove() {
         handleResultValidation();
     }
     unlockGameField(); // Разблокируем поле после хода компьютера
+    console.log('Field unlocked after AI move.');
 }
 
 function minimax(newBoard, depth, isMaximizing) {
