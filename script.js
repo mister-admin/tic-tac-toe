@@ -47,10 +47,14 @@ function handleCellClick(event) {
     updateBoard(clickedCell, clickedCellIndex);
     handleResultValidation();
 
+    // Блокируем поле сразу после хода игрока
+    lockGameField();
+
     // Если игра против компьютера и текущий игрок — компьютер
     if (aiMode && gameActive && currentPlayer === computerRole) {
-        lockGameField(); // Блокируем поле перед ходом компьютера
         setTimeout(aiMove, 500); // Добавляем задержку для ИИ
+    } else {
+        unlockGameField(); // Разблокируем поле, если играем вдвоем
     }
 }
 
