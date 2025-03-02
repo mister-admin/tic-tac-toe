@@ -135,6 +135,8 @@ function resetGame() {
         cell.textContent = '';
         cell.removeAttribute('disabled');
         cell.classList.remove('win-cell');
+        cell.style.transform = 'scale(1)'; // Сбрасываем анимацию
+        cell.style.boxShadow = 'none'; // Сбрасываем тени
     });
     announce(i18n[currentLang].gameTitle);
     console.log('Game reset.');
@@ -206,7 +208,13 @@ function isBoardFull(board) {
 function highlightWinningCombo() {
     winningConditions.forEach(condition => {
         if (condition.every(index => board[index] === currentPlayer)) {
-            condition.forEach(index => cells[index].classList.add('win-cell'));
+            condition.forEach(index => {
+                cells[index].classList.add('win-cell');
+                // Добавляем анимацию победы
+                cells[index].style.transition = 'all 0.5s ease';
+                cells[index].style.transform = 'scale(1.1)';
+                cells[index].style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.8)';
+            });
         }
     });
 }
