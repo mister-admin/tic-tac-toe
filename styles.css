@@ -26,11 +26,22 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
+    padding: 20px; /* Добавим отступы по краям */
+}
+
+.container {
+    max-width: 800px; /* Ограничим ширину контента */
+    margin: 0 auto; /* Центрируем контейнер */
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.1); /* Лёгкий фон для контейнера */
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Тень для контейнера */
 }
 
 h1 {
     font-size: 2.5em;
     margin-bottom: 20px;
+    text-align: center; /* Центрируем заголовок */
     animation: fadeIn 1s ease-in-out;
 }
 
@@ -38,8 +49,8 @@ h1 {
     display: grid;
     grid-template-columns: repeat(3, 100px);
     grid-gap: 10px;
-    animation: slideIn 0.5s ease-in-out;
-    margin: 20px 0;
+    margin: 20px auto; /* Центрируем игровое поле */
+    justify-content: center; /* Центрируем клетки внутри контейнера */
 }
 
 .cell {
@@ -72,6 +83,7 @@ h1 {
 .controls {
     margin-top: 20px;
     margin-bottom: 10px;
+    text-align: center; /* Центрируем кнопку */
     animation: fadeIn 1s ease-in-out;
 }
 
@@ -93,15 +105,30 @@ h1 {
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
 }
 
-.mode-selector, .player-selector, .theme-selector, .lang-selector {
-    margin-bottom: 10px;
-    animation: fadeIn 1s ease-in-out;
+.settings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Расстояние между группами настроек */
+    justify-content: center; /* Центрируем группы настроек */
+    margin-bottom: 20px;
 }
 
-.mode-selector label, .player-selector label, .theme-selector label, .lang-selector label {
-    margin-right: 10px;
+.settings-group {
+    background-color: rgba(255, 255, 255, 0.1); /* Лёгкий фон для групп */
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Тень для групп */
+}
+
+.settings-group label {
+    display: block;
+    margin-bottom: 5px;
     font-size: 1.1em;
     cursor: pointer;
+}
+
+.settings-group input[type="radio"] {
+    margin-right: 5px;
 }
 
 @keyframes fadeIn {
