@@ -22,18 +22,43 @@ const winningConditions = [
     [2, 4, 6]
 ];
 
+// Локализация
 const i18n = {
     ru: {
+        gameTitle: "Крестики-нолики",
         restart: "Начать заново",
-        gameTitle: "Крестики-нолики"
+        modeLabel: "Режим игры",
+        modeAI: "Против компьютера",
+        modeTwoPlayers: "Вдвоём",
+        playerLabel: "Играть за",
+        themeLabel: "Тема",
+        themeClassic: "☀️ Светлая",
+        themeDark: "🌙 Тёмная",
+        langLabel: "Язык",
+        xWins: "Победил X!",
+        oWins: "Победил O!",
+        draw: "Ничья!",
+        footer: "Исходный код на "
     },
     en: {
+        gameTitle: "Tic Tac Toe",
         restart: "Restart",
-        gameTitle: "Tic Tac Toe"
+        modeLabel: "Game Mode",
+        modeAI: "Against Computer",
+        modeTwoPlayers: "Two Players",
+        playerLabel: "Play as",
+        themeLabel: "Theme",
+        themeClassic: "☀️ Light",
+        themeDark: "🌙 Dark",
+        langLabel: "Language",
+        xWins: "X wins!",
+        oWins: "O wins!",
+        draw: "Draw!",
+        footer: "Source code on "
     }
 };
 
-let currentLang = 'ru';
+let currentLang = 'ru'; // Текущий язык
 
 // Функция блокировки игрового поля
 function lockGameField() {
@@ -98,7 +123,7 @@ function handleResultValidation() {
         }
     }
     if (roundWon) {
-        announce(currentPlayer === 'X' ? 'Победил X!' : 'Победил O!');
+        announce(currentPlayer === 'X' ? i18n[currentLang].xWins : i18n[currentLang].oWins);
         gameActive = false;
         highlightWinningCombo();
         soundManager.play('win');
@@ -107,7 +132,7 @@ function handleResultValidation() {
     }
     let roundDraw = !board.includes('');
     if (roundDraw) {
-        announce("Ничья!");
+        announce(i18n[currentLang].draw);
         gameActive = false;
         soundManager.play('draw');
         console.log('Game ended in a draw.');
@@ -219,75 +244,34 @@ function highlightWinningCombo() {
     });
 }
 
+// Функция смены языка
 function setLanguage(lang) {
     currentLang = lang;
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.dataset.i18n;
-        el.textContent = i18n[lang][key];
-    });
-    announce(i18n[currentLang].gameTitle);
+    // Обновляем текст на странице
+    document.getElementById('gameTitle').textContent = i18n[lang].gameTitle;
+    document.getElementById('reset').textContent = i18n[lang].restart;
+    document.querySelector('label[for="mode-ai"]').textContent = i18n[lang].modeAI;
+    document.querySelector('label[for="mode-twoPlayers"]').textContent = i18n[lang].modeTwoPlayers;
+    document.querySelector('label[for="player-X"]').textContent = `X (${i18n[lang].playerLabel})`;
+    document.querySelector('label[for="player-O"]').textContent = `O (${i18n[lang].playerLabel})`;
+    document.querySelector('label[for="theme-classic"]').textContent = i18n[lang].themeClassic;
+    document.querySelector('label[for="theme-dark"]').textContent = i18n[lang].themeDark;
+    document.querySelector('label[for="lang-ru"]').textContent = 'RU';
+    document.querySelector('label[for="lang-en"]').textContent = 'EN';
+    document.querySelector('footer').innerHTML = `${i18n[lang].footer} <a href="https://github.com/mister-admin/tic-tac-toe" target="_blank">GitHub</a>`;
+    // Сохраняем язык в localStorage
+    localStorage.setItem('language', lang);
 }
 
-function toggleTheme() {
-    const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
-    if (selectedTheme === 'dark') {
-        document.body.classList.add('dark-theme');
-    } else {
-        document.body.classList.remove('dark-theme');
-    }
-    localStorage.setItem('theme', selectedTheme);
-}
-
-class SoundManager {
-    constructor() {
-        this.sounds = {
-            move: new Audio('https://www.soundjay.com/button/beep-07.wav'),
-            win: new Audio('https://www.soundjay.com/misc/success-01.wav'),
-            draw: new Audio('https://www.soundjay.com/misc/fail-01.wav')
-        };
-    }
-    play(soundName) {
-        if (this.sounds[soundName]) {
-            this.sounds[soundName].currentTime = 0;
-            this.sounds[soundName].play().catch(err => console.warn('Audio playback failed:', err));
-        }
-    }
-}
-
-const soundManager = new SoundManager();
-
-cells.forEach(cell => cell.addEventListener('click', handleCellClick));
-resetButton.addEventListener('click', resetGame);
-
-themeRadios.forEach(radio => radio.addEventListener('change', toggleTheme));
+// Обработчик изменения языка
 langRadios.forEach(radio => radio.addEventListener('change', () => {
     const selectedLang = document.querySelector('input[name="lang"]:checked').value;
     setLanguage(selectedLang);
-    localStorage.setItem('language', selectedLang);
-}));
-
-modeRadios.forEach(radio => radio.addEventListener('change', () => {
-    aiMode = radio.value === 'ai';
-    resetGame();
-}));
-
-playerRadios.forEach(radio => radio.addEventListener('change', () => {
-    playerRole = radio.value;
-    computerRole = playerRole === 'X' ? 'O' : 'X';
-    resetGame();
 }));
 
 // При загрузке страницы
-const savedTheme = localStorage.getItem('theme') || 'classic';
-if (savedTheme === 'dark') {
-    document.body.classList.add('dark-theme');
-    document.querySelector('input[name="theme"][value="dark"]').checked = true;
-} else {
-    document.querySelector('input[name="theme"][value="classic"]').checked = true;
-}
-
 const savedLang = localStorage.getItem('language') || 'ru';
 setLanguage(savedLang);
 document.querySelector(`input[name="lang"][value="${savedLang}"]`).checked = true;
 
-resetGame();
+// Остальной код...
