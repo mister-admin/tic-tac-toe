@@ -9,36 +9,28 @@
 <body>
     <h1 id="gameTitle">Крестики-нолики</h1>
     <div class="mode-selector">
-        <label>
-            <input type="radio" name="mode" value="ai" checked> Против компьютера
-        </label>
-        <label>
-            <input type="radio" name="mode" value="twoPlayers"> Вдвоем
-        </label>
+        <label for="mode-ai" id="mode-ai-label">Против компьютера</label>
+        <input type="radio" id="mode-ai" name="mode" value="ai" checked>
+        <label for="mode-twoPlayers" id="mode-twoPlayers-label">Вдвоём</label>
+        <input type="radio" id="mode-twoPlayers" name="mode" value="twoPlayers">
     </div>
     <div class="player-selector">
-        <label>
-            <input type="radio" name="player" value="X" checked> Играть за X
-        </label>
-        <label>
-            <input type="radio" name="player" value="O"> Играть за O
-        </label>
+        <label for="player-X" id="player-X-label">Играть за X</label>
+        <input type="radio" id="player-X" name="player" value="X" checked>
+        <label for="player-O" id="player-O-label">Играть за O</label>
+        <input type="radio" id="player-O" name="player" value="O">
     </div>
     <div class="theme-selector">
-        <label>
-            <input type="radio" name="theme" value="classic" checked> ☀️
-        </label>
-        <label>
-            <input type="radio" name="theme" value="dark"> 🌙
-        </label>
+        <label for="theme-classic" id="theme-classic-label">☀️ Светлая</label>
+        <input type="radio" id="theme-classic" name="theme" value="classic" checked>
+        <label for="theme-dark" id="theme-dark-label">🌙 Тёмная</label>
+        <input type="radio" id="theme-dark" name="theme" value="dark">
     </div>
     <div class="lang-selector">
-        <label>
-            <input type="radio" name="lang" value="ru" checked> RU
-        </label>
-        <label>
-            <input type="radio" name="lang" value="en"> EN
-        </label>
+        <label for="lang-ru" id="lang-ru-label">RU</label>
+        <input type="radio" id="lang-ru" name="lang" value="ru" checked>
+        <label for="lang-en" id="lang-en-label">EN</label>
+        <input type="radio" id="lang-en" name="lang" value="en">
     </div>
     <div class="game-container">
         <div class="cell" data-index="0"></div>
@@ -54,18 +46,9 @@
     <div class="controls">
         <button id="reset" data-i18n="restart">Начать заново</button>
     </div>
-
-    <!-- Ссылка на исходный код -->
     <footer>
-        Исходный код находится по ссылке: 
-        <a href="https://github.com/mister-admin/tic-tac-toe" target="_blank">GitHub</a>
+        Исходный код на <a href="https://github.com/mister-admin/tic-tac-toe" target="_blank">GitHub</a>
     </footer>
-
-    <!-- Звуковые эффекты -->
-    <audio id="moveSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
-    <audio id="winSound" src="https://www.soundjay.com/misc/success-01.wav" preload="auto"></audio>
-    <audio id="drawSound" src="https://www.soundjay.com/misc/fail-01.wav" preload="auto"></audio>
-
     <script src="script.js"></script>
 </body>
 </html>
