@@ -26,13 +26,13 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
-    padding: 20px; /* Добавим отступы по краям */
+    padding: 30px; /* Увеличили отступы по краям */
 }
 
 .container {
     max-width: 800px; /* Ограничим ширину контента */
     margin: 0 auto; /* Центрируем контейнер */
-    padding: 20px;
+    padding: 30px; /* Увеличили внутренние отступы */
     background-color: rgba(255, 255, 255, 0.1); /* Лёгкий фон для контейнера */
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Тень для контейнера */
@@ -40,7 +40,7 @@ body {
 
 h1 {
     font-size: 2.5em;
-    margin-bottom: 20px;
+    margin-bottom: 30px; /* Увеличили отступ снизу */
     text-align: center; /* Центрируем заголовок */
     animation: fadeIn 1s ease-in-out;
 }
@@ -48,8 +48,8 @@ h1 {
 .game-container {
     display: grid;
     grid-template-columns: repeat(3, 100px);
-    grid-gap: 10px;
-    margin: 20px auto; /* Центрируем игровое поле */
+    grid-gap: 15px; /* Увеличили расстояние между клетками */
+    margin: 30px auto; /* Увеличили отступы сверху и снизу */
     justify-content: center; /* Центрируем клетки внутри контейнера */
 }
 
@@ -81,16 +81,16 @@ h1 {
 }
 
 .controls {
-    margin-top: 20px;
-    margin-bottom: 10px;
+    margin-top: 30px; /* Увеличили отступ сверху */
+    margin-bottom: 20px; /* Увеличили отступ снизу */
     text-align: center; /* Центрируем кнопку */
     animation: fadeIn 1s ease-in-out;
 }
 
 .controls button {
-    margin: 0 5px;
-    padding: 10px 20px;
-    font-size: 1em;
+    margin: 0 10px; /* Увеличили отступы между кнопками */
+    padding: 12px 24px; /* Увеличили размер кнопки */
+    font-size: 1.1em; /* Увеличили размер текста */
     border: none;
     border-radius: 25px;
     cursor: pointer;
@@ -108,27 +108,27 @@ h1 {
 .settings {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px; /* Расстояние между группами настроек */
+    gap: 25px; /* Увеличили расстояние между группами настроек */
     justify-content: center; /* Центрируем группы настроек */
-    margin-bottom: 20px;
+    margin-bottom: 30px; /* Увеличили отступ снизу */
 }
 
 .settings-group {
     background-color: rgba(255, 255, 255, 0.1); /* Лёгкий фон для групп */
-    padding: 15px;
+    padding: 20px; /* Увеличили внутренние отступы */
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Тень для групп */
 }
 
 .settings-group label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 10px; /* Увеличили отступ между элементами */
     font-size: 1.1em;
     cursor: pointer;
 }
 
 .settings-group input[type="radio"] {
-    margin-right: 5px;
+    margin-right: 8px; /* Увеличили отступ между радиокнопкой и текстом */
 }
 
 @keyframes fadeIn {
@@ -157,7 +157,7 @@ h1 {
 }
 
 footer {
-    margin-top: 20px;
+    margin-top: 30px; /* Увеличили отступ сверху */
     font-size: 0.9em;
     color: var(--text-color);
     text-align: center;
@@ -189,8 +189,8 @@ footer a:hover {
         padding: 10px;
     }
     .controls button {
-        padding: 8px 12px;
-        font-size: 14px;
+        padding: 10px 20px;
+        font-size: 1em;
     }
     .cell {
         width: 70px;
