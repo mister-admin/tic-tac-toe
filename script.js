@@ -274,4 +274,48 @@ const savedLang = localStorage.getItem('language') || 'ru';
 setLanguage(savedLang);
 document.querySelector(`input[name="lang"][value="${savedLang}"]`).checked = true;
 
-// Остальной код...
+// Звуковые эффекты
+class SoundManager {
+    constructor() {
+        this.sounds = {
+            move: new Audio('https://www.soundjay.com/button/beep-07.wav'),
+            win: new Audio('https://www.soundjay.com/misc/success-01.wav'),
+            draw: new Audio('https://www.soundjay.com/misc/fail-01.wav')
+        };
+    }
+    play(soundName) {
+        if (this.sounds[soundName]) {
+            this.sounds[soundName].currentTime = 0;
+            this.sounds[soundName].play().catch(err => console.warn('Audio playback failed:', err));
+        }
+    }
+}
+
+const soundManager = new SoundManager();
+
+cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+resetButton.addEventListener('click', resetGame);
+
+themeRadios.forEach(radio => radio.addEventListener('change', () => {
+    const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
+    if (selectedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+    } else {
+        document.body.classList.remove('dark-theme');
+    }
+    localStorage.setItem('theme', selectedTheme);
+}));
+
+modeRadios.forEach(radio => radio.addEventListener('change', () => {
+    aiMode = radio.value === 'ai';
+    resetGame();
+}));
+
+playerRadios.forEach(radio => radio.addEventListener('change', () => {
+    playerRole = radio.value;
+    computerRole = playerRole === 'X' ? 'O' : 'X';
+    resetGame();
+}));
+
+// Инициализация игры
+resetGame();
