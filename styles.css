@@ -30,12 +30,9 @@ body {
 }
 
 .container {
-    max-width: 800px; /* Ограничим ширину контента */
+    max-width: 1000px; /* Увеличили ширину контейнера */
     margin: 0 auto; /* Центрируем контейнер */
-    padding: 30px; /* Увеличили внутренние отступы */
-    background-color: rgba(255, 255, 255, 0.1); /* Лёгкий фон для контейнера */
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Тень для контейнера */
+    padding: 20px; /* Уменьшили внутренние отступы */
 }
 
 h1 {
@@ -107,17 +104,15 @@ h1 {
 
 .settings {
     display: flex;
-    flex-wrap: wrap;
-    gap: 25px; /* Увеличили расстояние между группами настроек */
+    flex-wrap: nowrap; /* Элементы в одну строку */
+    gap: 30px; /* Увеличили расстояние между группами настроек */
     justify-content: center; /* Центрируем группы настроек */
     margin-bottom: 30px; /* Увеличили отступ снизу */
 }
 
 .settings-group {
-    background-color: rgba(255, 255, 255, 0.1); /* Лёгкий фон для групп */
-    padding: 20px; /* Увеличили внутренние отступы */
+    padding: 15px; /* Уменьшили внутренние отступы */
     border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Тень для групп */
 }
 
 .settings-group label {
@@ -172,6 +167,17 @@ footer a {
 
 footer a:hover {
     color: var(--x-color);
+}
+
+@media (max-width: 768px) {
+    .settings {
+        flex-wrap: wrap; /* На мобильных устройствах группы переносятся на новую строку */
+        gap: 20px; /* Уменьшаем расстояние между группами */
+    }
+
+    .settings-group {
+        flex: 1 1 45%; /* Группы занимают 45% ширины */
+    }
 }
 
 @media (max-width: 400px) {
