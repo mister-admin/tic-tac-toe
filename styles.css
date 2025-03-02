@@ -31,6 +31,7 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
+    text-align: center; /* Центрируем текст */
 }
 
 h1 {
@@ -44,6 +45,7 @@ h1 {
     grid-template-columns: repeat(3, 100px);
     grid-gap: 10px;
     animation: slideIn 0.5s ease-in-out;
+    margin: 20px 0; /* Отступ сверху и снизу */
 }
 
 .cell {
@@ -100,10 +102,13 @@ h1 {
 .mode-selector, .player-selector, .theme-selector, .lang-selector {
     margin-bottom: 10px;
     animation: fadeIn 1s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Центрируем элементы */
 }
 
 .mode-selector label, .player-selector label, .theme-selector label, .lang-selector label {
-    margin-right: 10px;
+    margin: 5px 0; /* Отступ между элементами */
     font-size: 1.1em;
     cursor: pointer;
 }
