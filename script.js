@@ -55,7 +55,7 @@ function handleCellClick(event) {
     console.log(`Current player: ${currentPlayer}, Game active: ${gameActive}`);
 
     // Проверяем, можно ли сделать ход
-    if (board[clickedCellIndex] !== '' || !gameActive || currentPlayer !== playerRole) {
+    if (board[clickedCellIndex] !== '' || !gameActive) {
         console.log('Invalid move. Returning...');
         return;
     }
@@ -72,14 +72,14 @@ function handleCellClick(event) {
         console.log('AI is making a move...');
         setTimeout(aiMove, 500); // Добавляем задержку для ИИ
     } else {
-        unlockGameField(); // Разблокируем поле, если играем вдвоем
+        // Разблокируем поле, если играем вдвоем или после хода игрока
+        unlockGameField();
     }
 }
 
 function updateBoard(clickedCell, index) {
     board[index] = currentPlayer;
     clickedCell.textContent = currentPlayer;
-    clickedCell.setAttribute('disabled', true);
     soundManager.play('move');
     console.log(`Updated board at index ${index} with ${currentPlayer}.`);
 }
