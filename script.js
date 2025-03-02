@@ -60,9 +60,6 @@ function handleCellClick(event) {
         return;
     }
 
-    // Блокируем поле перед обновлением доски
-    lockGameField();
-
     // Обновляем доску и проверяем результат
     updateBoard(clickedCell, clickedCellIndex);
     handleResultValidation();
@@ -71,9 +68,6 @@ function handleCellClick(event) {
     if (aiMode && gameActive && currentPlayer === computerRole) {
         console.log('AI is making a move...');
         setTimeout(aiMove, 500); // Добавляем задержку для ИИ
-    } else {
-        // Разблокируем поле, если играем вдвоем или после хода игрока
-        unlockGameField();
     }
 }
 
