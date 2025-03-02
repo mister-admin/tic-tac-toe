@@ -7,48 +7,64 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1 id="gameTitle">Крестики-нолики</h1>
-    <div class="mode-selector">
-        <label for="mode-ai" id="mode-ai-label">Против компьютера</label>
-        <input type="radio" id="mode-ai" name="mode" value="ai" checked>
-        <label for="mode-twoPlayers" id="mode-twoPlayers-label">Вдвоём</label>
-        <input type="radio" id="mode-twoPlayers" name="mode" value="twoPlayers">
+    <div class="container">
+        <h1 id="gameTitle">Крестики-нолики</h1>
+
+        <!-- Группа настроек -->
+        <div class="settings">
+            <div class="settings-group">
+                <label for="mode-ai" id="mode-ai-label">Против компьютера</label>
+                <input type="radio" id="mode-ai" name="mode" value="ai" checked>
+                <label for="mode-twoPlayers" id="mode-twoPlayers-label">Вдвоём</label>
+                <input type="radio" id="mode-twoPlayers" name="mode" value="twoPlayers">
+            </div>
+
+            <div class="settings-group">
+                <label for="player-X" id="player-X-label">Играть за X</label>
+                <input type="radio" id="player-X" name="player" value="X" checked>
+                <label for="player-O" id="player-O-label">Играть за O</label>
+                <input type="radio" id="player-O" name="player" value="O">
+            </div>
+
+            <div class="settings-group">
+                <label for="theme-classic" id="theme-classic-label">☀️ Светлая</label>
+                <input type="radio" id="theme-classic" name="theme" value="classic" checked>
+                <label for="theme-dark" id="theme-dark-label">🌙 Тёмная</label>
+                <input type="radio" id="theme-dark" name="theme" value="dark">
+            </div>
+
+            <div class="settings-group">
+                <label for="lang-ru" id="lang-ru-label">RU</label>
+                <input type="radio" id="lang-ru" name="lang" value="ru" checked>
+                <label for="lang-en" id="lang-en-label">EN</label>
+                <input type="radio" id="lang-en" name="lang" value="en">
+            </div>
+        </div>
+
+        <!-- Игровое поле -->
+        <div class="game-container">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+
+        <!-- Кнопка сброса -->
+        <div class="controls">
+            <button id="reset" data-i18n="restart">Начать заново</button>
+        </div>
+
+        <!-- Футер -->
+        <footer>
+            Исходный код на <a href="https://github.com/mister-admin/tic-tac-toe" target="_blank">GitHub</a>
+        </footer>
     </div>
-    <div class="player-selector">
-        <label for="player-X" id="player-X-label">Играть за X</label>
-        <input type="radio" id="player-X" name="player" value="X" checked>
-        <label for="player-O" id="player-O-label">Играть за O</label>
-        <input type="radio" id="player-O" name="player" value="O">
-    </div>
-    <div class="theme-selector">
-        <label for="theme-classic" id="theme-classic-label">☀️ Светлая</label>
-        <input type="radio" id="theme-classic" name="theme" value="classic" checked>
-        <label for="theme-dark" id="theme-dark-label">🌙 Тёмная</label>
-        <input type="radio" id="theme-dark" name="theme" value="dark">
-    </div>
-    <div class="lang-selector">
-        <label for="lang-ru" id="lang-ru-label">RU</label>
-        <input type="radio" id="lang-ru" name="lang" value="ru" checked>
-        <label for="lang-en" id="lang-en-label">EN</label>
-        <input type="radio" id="lang-en" name="lang" value="en">
-    </div>
-    <div class="game-container">
-        <div class="cell" data-index="0"></div>
-        <div class="cell" data-index="1"></div>
-        <div class="cell" data-index="2"></div>
-        <div class="cell" data-index="3"></div>
-        <div class="cell" data-index="4"></div>
-        <div class="cell" data-index="5"></div>
-        <div class="cell" data-index="6"></div>
-        <div class="cell" data-index="7"></div>
-        <div class="cell" data-index="8"></div>
-    </div>
-    <div class="controls">
-        <button id="reset" data-i18n="restart">Начать заново</button>
-    </div>
-    <footer>
-        Исходный код на <a href="https://github.com/mister-admin/tic-tac-toe" target="_blank">GitHub</a>
-    </footer>
+
     <script src="script.js"></script>
 </body>
 </html>
