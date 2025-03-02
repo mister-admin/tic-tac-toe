@@ -1,27 +1,27 @@
 :root {
-    --bg-color: #ffffff;
-    --cell-color: #f8f9fa;
-    --text-color: #212529;
-    --button-bg: #1a73e8;
-    --button-text: #ffffff;
-    --border-color: #dee2e6;
-    --x-color: #dc3545;
-    --o-color: #28a745;
+    --bg-color: #f9f5e3; /* Тёплый бежевый */
+    --cell-color: #fff8e1; /* Светлый бежевый */
+    --text-color: #5a3e36; /* Тёмный коричневый */
+    --button-bg: #ff8c42; /* Тёплый оранжевый */
+    --button-text: #ffffff; /* Белый */
+    --border-color: #d4a373; /* Светлый коричневый */
+    --x-color: #e76f51; /* Тёплый красный */
+    --o-color: #2a9d8f; /* Тёплый зелёный */
 }
 
 .dark-theme {
-    --bg-color: #2b2d42;
-    --cell-color: #404258;
-    --text-color: #edf2f4;
-    --button-bg: #4cc9f0;
-    --button-text: #2b2d42;
-    --border-color: #8d99ae;
-    --x-color: #ef233c;
-    --o-color: #80ed99;
+    --bg-color: #2b2d42; /* Тёмный синий */
+    --cell-color: #404258; /* Тёмный серый */
+    --text-color: #edf2f4; /* Светлый серый */
+    --button-bg: #4cc9f0; /* Светлый голубой */
+    --button-text: #2b2d42; /* Тёмный синий */
+    --border-color: #8d99ae; /* Серый */
+    --x-color: #ef233c; /* Яркий красный */
+    --o-color: #80ed99; /* Светлый зелёный */
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -34,14 +34,16 @@ body {
 }
 
 h1 {
-    font-size: 2em;
+    font-size: 2.5em;
     margin-bottom: 20px;
+    animation: fadeIn 1s ease-in-out;
 }
 
 .game-container {
     display: grid;
     grid-template-columns: repeat(3, 100px);
-    grid-gap: 5px;
+    grid-gap: 10px;
+    animation: slideIn 0.5s ease-in-out;
 }
 
 .cell {
@@ -51,17 +53,18 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2em;
+    font-size: 2.5em;
     cursor: pointer;
     border: 3px solid var(--border-color);
-    border-radius: 5px;
+    border-radius: 15px;
     user-select: none;
-    transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease, filter 0.2s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .cell:hover:not([disabled]) {
     background-color: #f0f0f0;
     transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
 .cell[disabled] {
@@ -72,7 +75,8 @@ h1 {
 
 .controls {
     margin-top: 20px;
-    margin-bottom: 10px; /* Добавлено для отступа снизу */
+    margin-bottom: 10px;
+    animation: fadeIn 1s ease-in-out;
 }
 
 .controls button {
@@ -80,23 +84,38 @@ h1 {
     padding: 10px 20px;
     font-size: 1em;
     border: none;
-    border-radius: 5px;
+    border-radius: 25px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     background-color: var(--button-bg);
     color: var(--button-text);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .controls button:hover {
-    filter: brightness(1.15);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
 }
 
 .mode-selector, .player-selector, .theme-selector, .lang-selector {
     margin-bottom: 10px;
+    animation: fadeIn 1s ease-in-out;
 }
 
 .mode-selector label, .player-selector label, .theme-selector label, .lang-selector label {
     margin-right: 10px;
+    font-size: 1.1em;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes winAnimation {
@@ -115,16 +134,17 @@ h1 {
 }
 
 footer {
-    margin-top: 10px; /* Уменьшен отступ сверху */
-    font-size: 0.8em; /* Уменьшен размер шрифта */
+    margin-top: 20px;
+    font-size: 0.9em;
     color: var(--text-color);
     text-align: center;
+    animation: fadeIn 1s ease-in-out;
 }
 
 footer a {
     color: var(--button-bg);
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: color 0.3s ease;
 }
 
 footer a:hover {
