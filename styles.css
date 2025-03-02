@@ -96,15 +96,31 @@ h1 {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-.mode-selector, .player-selector, .theme-selector, .lang-selector {
-    margin-bottom: 10px; /* Компактный отступ снизу */
-    text-align: center; /* Центрируем элементы */
+.settings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Компактное расстояние между группами */
+    justify-content: center; /* Центрируем группы */
+    margin-bottom: 15px; /* Компактный отступ снизу */
 }
 
-.mode-selector label, .player-selector label, .theme-selector label, .lang-selector label {
-    margin-right: 10px; /* Компактный отступ между элементами */
+.settings-group {
+    background-color: rgba(255, 255, 255, 0.1); /* Лёгкий фон для групп */
+    padding: 10px; /* Компактные внутренние отступы */
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
+    text-align: center; /* Центрируем текст внутри групп */
+}
+
+.settings-group label {
+    display: block;
+    margin-bottom: 5px; /* Компактный отступ между элементами */
     font-size: 1em;
     cursor: pointer;
+}
+
+.settings-group input[type="radio"] {
+    margin-right: 5px; /* Компактный отступ между радиокнопкой и текстом */
 }
 
 @keyframes fadeIn {
