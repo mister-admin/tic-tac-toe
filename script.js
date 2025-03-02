@@ -8,7 +8,7 @@ const langRadios = document.querySelectorAll('input[name="lang"]');
 let board = ['', '', '', '', '', '', '', '', ''];
 let currentPlayer = 'X';
 let gameActive = true;
-let aiMode = true;
+let aiMode = true; // Режим игры: true - против компьютера, false - вдвоём
 let playerRole = 'X'; // Роль игрока
 let computerRole = 'O'; // Роль компьютера
 const winningConditions = [
@@ -67,7 +67,11 @@ function handleCellClick(event) {
     // Если игра против компьютера и игра ещё активна
     if (aiMode && gameActive && currentPlayer === computerRole) {
         console.log('AI is making a move...');
+        lockGameField(); // Блокируем поле перед ходом компьютера
         setTimeout(aiMove, 500); // Добавляем задержку для ИИ
+    } else if (!aiMode) {
+        // В режиме "вдвоём" поле не блокируется
+        unlockGameField();
     }
 }
 
