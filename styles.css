@@ -26,18 +26,12 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
-    padding: 30px; /* Увеличили отступы по краям */
-}
-
-.container {
-    max-width: 1000px; /* Увеличили ширину контейнера */
-    margin: 0 auto; /* Центрируем контейнер */
-    padding: 20px; /* Уменьшили внутренние отступы */
+    padding: 20px; /* Компактные отступы по краям */
 }
 
 h1 {
-    font-size: 2.5em;
-    margin-bottom: 30px; /* Увеличили отступ снизу */
+    font-size: 2em;
+    margin-bottom: 15px; /* Компактный отступ снизу */
     text-align: center; /* Центрируем заголовок */
     animation: fadeIn 1s ease-in-out;
 }
@@ -45,8 +39,8 @@ h1 {
 .game-container {
     display: grid;
     grid-template-columns: repeat(3, 100px);
-    grid-gap: 15px; /* Увеличили расстояние между клетками */
-    margin: 30px auto; /* Увеличили отступы сверху и снизу */
+    grid-gap: 5px; /* Компактное расстояние между клетками */
+    margin: 15px auto; /* Компактные отступы сверху и снизу */
     justify-content: center; /* Центрируем клетки внутри контейнера */
 }
 
@@ -57,18 +51,18 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2.5em;
+    font-size: 2em;
     cursor: pointer;
-    border: 3px solid var(--border-color);
-    border-radius: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
     user-select: none;
-    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .cell:hover:not([disabled]) {
     background-color: #f0f0f0;
     transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .cell[disabled] {
@@ -78,52 +72,39 @@ h1 {
 }
 
 .controls {
-    margin-top: 30px; /* Увеличили отступ сверху */
-    margin-bottom: 20px; /* Увеличили отступ снизу */
+    margin-top: 15px; /* Компактный отступ сверху */
+    margin-bottom: 10px; /* Компактный отступ снизу */
     text-align: center; /* Центрируем кнопку */
     animation: fadeIn 1s ease-in-out;
 }
 
 .controls button {
-    margin: 0 10px; /* Увеличили отступы между кнопками */
-    padding: 12px 24px; /* Увеличили размер кнопки */
-    font-size: 1.1em; /* Увеличили размер текста */
+    margin: 0 5px; /* Компактные отступы между кнопками */
+    padding: 8px 16px; /* Компактный размер кнопки */
+    font-size: 1em; /* Стандартный размер текста */
     border: none;
-    border-radius: 25px;
+    border-radius: 20px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     background-color: var(--button-bg);
     color: var(--button-text);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .controls button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-.settings {
-    display: flex;
-    flex-wrap: nowrap; /* Элементы в одну строку */
-    gap: 30px; /* Увеличили расстояние между группами настроек */
-    justify-content: center; /* Центрируем группы настроек */
-    margin-bottom: 30px; /* Увеличили отступ снизу */
+.mode-selector, .player-selector, .theme-selector, .lang-selector {
+    margin-bottom: 10px; /* Компактный отступ снизу */
+    text-align: center; /* Центрируем элементы */
 }
 
-.settings-group {
-    padding: 15px; /* Уменьшили внутренние отступы */
-    border-radius: 10px;
-}
-
-.settings-group label {
-    display: block;
-    margin-bottom: 10px; /* Увеличили отступ между элементами */
-    font-size: 1.1em;
+.mode-selector label, .player-selector label, .theme-selector label, .lang-selector label {
+    margin-right: 10px; /* Компактный отступ между элементами */
+    font-size: 1em;
     cursor: pointer;
-}
-
-.settings-group input[type="radio"] {
-    margin-right: 8px; /* Увеличили отступ между радиокнопкой и текстом */
 }
 
 @keyframes fadeIn {
@@ -152,8 +133,8 @@ h1 {
 }
 
 footer {
-    margin-top: 30px; /* Увеличили отступ сверху */
-    font-size: 0.9em;
+    margin-top: 15px; /* Компактный отступ сверху */
+    font-size: 0.8em;
     color: var(--text-color);
     text-align: center;
     animation: fadeIn 1s ease-in-out;
@@ -162,22 +143,11 @@ footer {
 footer a {
     color: var(--button-bg);
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color 0.2s ease;
 }
 
 footer a:hover {
     color: var(--x-color);
-}
-
-@media (max-width: 768px) {
-    .settings {
-        flex-wrap: wrap; /* На мобильных устройствах группы переносятся на новую строку */
-        gap: 20px; /* Уменьшаем расстояние между группами */
-    }
-
-    .settings-group {
-        flex: 1 1 45%; /* Группы занимают 45% ширины */
-    }
 }
 
 @media (max-width: 400px) {
@@ -195,8 +165,8 @@ footer a:hover {
         padding: 10px;
     }
     .controls button {
-        padding: 10px 20px;
-        font-size: 1em;
+        padding: 6px 12px;
+        font-size: 0.9em;
     }
     .cell {
         width: 70px;
