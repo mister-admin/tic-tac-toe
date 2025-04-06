@@ -58,53 +58,41 @@ let currentLang = 'ru'; // Текущий язык
 // Функция блокировки игрового поля
 function lockGameField() {
     cells.forEach(cell => cell.setAttribute('disabled', true));
-    console.log('Field locked.');
 }
 
 // Функция разблокировки игрового поля
 function unlockGameField() {
     cells.forEach(cell => cell.removeAttribute('disabled'));
-    console.log('Field unlocked.');
 }
 
-// Функция блокировки настроек
-function lockSettings() {
-    document.querySelectorAll('.settings-group').forEach(group => 
-        group.classList.add('disabled')
-    );
-}
-
-// Функция разблокировки настроек
-function unlockSettings() {
-    document.querySelectorAll('.settings-group').forEach(group => 
-        group.classList.remove('disabled')
-    );
-}
-
+// Обработчик клика по ячейке
 function handleCellClick(event) {
+    if (!gameActive) return;
     const clickedCell = event.target;
-    const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
-    if (board[clickedCellIndex] !== '' || !gameActive) return;
+    const index = parseInt(clickedCell.dataset.index);
+    if (board[index] !== '') return;
 
-    updateBoard(clickedCell, clickedCellIndex);
+    updateBoard(clickedCell, index);
     handleResultValidation();
 
     if (aiMode && gameActive && currentPlayer === computerRole) {
         lockGameField();
-        setTimeout(aiMove, 500);
+        setTimeout(aiMove, 300); // Уменьшена задержка
     }
 }
 
+// Обновление доски
 function updateBoard(clickedCell, index) {
     board[index] = currentPlayer;
     clickedCell.textContent = currentPlayer;
     soundManager.play('move');
 }
 
+// Проверка результата
 function handleResultValidation() {
     let roundWon = false;
-    for (let i = 0; i < winningConditions.length; i++) {
-        const [a, b, c] = winningConditions[i];
+    for (let condition of winningConditions) {
+        const [a, b, c] = condition;
         if (board[a] && board[a] === board[b] && board[a] === board[c]) {
             roundWon = true;
             break;
@@ -116,7 +104,6 @@ function handleResultValidation() {
         gameActive = false;
         highlightWinningCombo();
         soundManager.play('win');
-        unlockSettings();
         return;
     }
 
@@ -124,29 +111,36 @@ function handleResultValidation() {
         announce(i18n[currentLang].draw);
         gameActive = false;
         soundManager.play('draw');
-        unlockSettings();
         return;
     }
 
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
 }
 
+// Объявление победителя или ничьи
 function announce(message) {
     document.getElementById('gameTitle').textContent = message;
 }
 
+// Перезапуск игры
 function resetGame() {
     board = ['', '', '', '', '', '', '', '', ''];
     gameActive = true;
-    unlockSettings();
+
+    aiMode = document.querySelector('input[name="mode"]:checked').value === 'ai';
+    playerRole = document.querySelector('input[name="player"]:checked').value;
+    computerRole = playerRole === 'X' ? 'O' : 'X';
 
     if (aiMode) {
         const startOrder = document.querySelector('input[name="startOrder"]:checked').value;
         currentPlayer = startOrder === 'player' ? playerRole : computerRole;
 
+        const startOrderGroup = document.getElementById('startOrderGroup');
+        startOrderGroup.style.display = aiMode ? 'block' : 'none';
+
         if (currentPlayer === computerRole) {
             lockGameField();
-            setTimeout(aiMove, 500);
+            setTimeout(aiMove, 300);
         } else {
             unlockGameField();
         }
@@ -166,18 +160,15 @@ function resetGame() {
     announce(i18n[currentLang].gameTitle);
 }
 
+// Ход компьютера
 function aiMove() {
-    let bestScore = -Infinity;
-    let move;
+    let bestScore = -Infinity, move;
     for (let i = 0; i < board.length; i++) {
         if (board[i] === '') {
             board[i] = computerRole;
-            let score = minimax(board, 0, false);
+            const score = minimax(board, 0, false);
             board[i] = '';
-            if (score > bestScore) {
-                bestScore = score;
-                move = i;
-            }
+            if (score > bestScore) [bestScore, move] = [score, i];
         }
     }
 
@@ -189,6 +180,7 @@ function aiMove() {
     if (gameActive) unlockGameField();
 }
 
+// Минимаксный алгоритм
 function minimax(newBoard, depth, isMaximizing) {
     if (checkWin(newBoard, computerRole)) return 10 - depth;
     if (checkWin(newBoard, playerRole)) return depth - 10;
@@ -199,7 +191,7 @@ function minimax(newBoard, depth, isMaximizing) {
         for (let i = 0; i < newBoard.length; i++) {
             if (newBoard[i] === '') {
                 newBoard[i] = computerRole;
-                let score = minimax(newBoard, depth + 1, false);
+                const score = minimax(newBoard, depth + 1, false);
                 newBoard[i] = '';
                 bestScore = Math.max(score, bestScore);
             }
@@ -210,7 +202,7 @@ function minimax(newBoard, depth, isMaximizing) {
         for (let i = 0; i < newBoard.length; i++) {
             if (newBoard[i] === '') {
                 newBoard[i] = playerRole;
-                let score = minimax(newBoard, depth + 1, true);
+                const score = minimax(newBoard, depth + 1, true);
                 newBoard[i] = '';
                 bestScore = Math.min(score, bestScore);
             }
@@ -219,14 +211,17 @@ function minimax(newBoard, depth, isMaximizing) {
     }
 }
 
+// Проверка победы
 function checkWin(board, player) {
     return winningConditions.some(condition => condition.every(index => board[index] === player));
 }
 
+// Проверка заполненности доски
 function isBoardFull(board) {
     return !board.includes('');
 }
 
+// Подсветка выигрышной комбинации
 function highlightWinningCombo() {
     winningConditions.forEach(condition => {
         if (condition.every(index => board[index] === currentPlayer)) {
@@ -240,6 +235,7 @@ function highlightWinningCombo() {
     });
 }
 
+// Смена языка
 function setLanguage(lang) {
     currentLang = lang;
     document.getElementById('gameTitle').textContent = i18n[lang].gameTitle;
@@ -256,15 +252,42 @@ function setLanguage(lang) {
     localStorage.setItem('language', lang);
 }
 
+// Обработчики настроек
 langRadios.forEach(radio => radio.addEventListener('change', () => {
     const selectedLang = document.querySelector('input[name="lang"]:checked').value;
     setLanguage(selectedLang);
 }));
 
-const savedLang = localStorage.getItem('language') || 'ru';
-setLanguage(savedLang);
-document.querySelector(`input[name="lang"][value="${savedLang}"]`).checked = true;
+themeRadios.forEach(radio => radio.addEventListener('change', () => {
+    const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
+    if (selectedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+    } else {
+        document.body.classList.remove('dark-theme');
+    }
+    localStorage.setItem('theme', selectedTheme);
+}));
 
+modeRadios.forEach(radio => radio.addEventListener('change', resetGame));
+playerRadios.forEach(radio => radio.addEventListener('change', resetGame));
+document.querySelectorAll('input[name="startOrder"]').forEach(radio => 
+    radio.addEventListener('change', resetGame)
+);
+
+// Инициализация игры
+document.addEventListener('DOMContentLoaded', () => {
+    const savedLang = localStorage.getItem('language') || 'ru';
+    setLanguage(savedLang);
+    document.querySelector(`input[name="lang"][value="${savedLang}"]`).checked = true;
+
+    const initialMode = document.querySelector('input[name="mode"]:checked').value;
+    const startOrderGroup = document.getElementById('startOrderGroup');
+    startOrderGroup.style.display = initialMode === 'ai' ? 'block' : 'none';
+
+    resetGame();
+});
+
+// Звуковые эффекты
 class SoundManager {
     constructor() {
         this.sounds = {
@@ -284,35 +307,3 @@ class SoundManager {
 const soundManager = new SoundManager();
 cells.forEach(cell => cell.addEventListener('click', handleCellClick));
 resetButton.addEventListener('click', resetGame);
-
-themeRadios.forEach(radio => radio.addEventListener('change', () => {
-    const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
-    if (selectedTheme === 'dark') {
-        document.body.classList.add('dark-theme');
-    } else {
-        document.body.classList.remove('dark-theme');
-    }
-    localStorage.setItem('theme', selectedTheme);
-}));
-
-modeRadios.forEach(radio => radio.addEventListener('change', () => {
-    aiMode = radio.value === 'ai';
-    const startOrderGroup = document.getElementById('startOrderGroup');
-    startOrderGroup.style.display = aiMode ? 'block' : 'none';
-    resetGame();
-}));
-
-playerRadios.forEach(radio => radio.addEventListener('change', () => {
-    playerRole = radio.value;
-    computerRole = playerRole === 'X' ? 'O' : 'X';
-    resetGame();
-}));
-
-document.querySelectorAll('input[name="startOrder"]').forEach(radio => {
-    radio.addEventListener('change', () => localStorage.setItem('startOrder', radio.value));
-});
-
-const savedStartOrder = localStorage.getItem('startOrder') || 'player';
-document.querySelector(`input[name="startOrder"][value="${savedStartOrder}"]`).checked = true;
-
-resetGame();
