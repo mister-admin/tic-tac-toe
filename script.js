@@ -270,9 +270,9 @@ document.addEventListener('DOMContentLoaded', () => {
 class SoundManager {
     constructor() {
         this.sounds = {
-            move: new Audio('https://www.soundjay.com/button/beep-07.wav'),
-            win: new Audio('https://www.soundjay.com/misc/success-01.wav'),
-            draw: new Audio('https://www.soundjay.com/misc/fail-01.wav')
+            move: new Audio('sounds/beep-07.wav'), // ← Проверьте путь
+            win: new Audio('sounds/success-01.wav'),
+            draw: new Audio('sounds/fail-01.wav')
         };
     }
     play(soundName) {
