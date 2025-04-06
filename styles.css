@@ -130,10 +130,6 @@ h1 {
     margin-right: 5px; /* Компактный отступ между радиокнопкой и текстом */
 }
 
-#startOrderGroup {
-    display: none; /* Скрываем блок выбора первого хода по умолчанию */
-}
-
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
