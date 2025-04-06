@@ -67,8 +67,9 @@ h1 {
 
 .cell[disabled] {
     pointer-events: none;
-    opacity: 0.9;
-    filter: saturate(0.8);
+    opacity: 0.7;
+    filter: grayscale(30%);
+    cursor: not-allowed;
 }
 
 .controls {
@@ -110,6 +111,12 @@ h1 {
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
     text-align: center; /* Центрируем текст внутри групп */
+    transition: opacity 0.3s ease;
+}
+
+.settings-group.disabled {
+    opacity: 0.6;
+    pointer-events: none;
 }
 
 .settings-group label {
