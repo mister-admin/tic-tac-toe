@@ -4,7 +4,6 @@ const modeRadios = document.querySelectorAll('input[name="mode"]');
 const playerRadios = document.querySelectorAll('input[name="player"]');
 const themeRadios = document.querySelectorAll('input[name="theme"]');
 const langRadios = document.querySelectorAll('input[name="lang"]');
-
 let board = ['', '', '', '', '', '', '', '', ''];
 let currentPlayer = 'X';
 let gameActive = true;
@@ -21,7 +20,6 @@ const winningConditions = [
     [0, 4, 8],
     [2, 4, 6]
 ];
-
 // Локализация
 const i18n = {
     ru: {
@@ -38,7 +36,10 @@ const i18n = {
         xWins: "Победил X!",
         oWins: "Победил O!",
         draw: "Ничья!",
-        footer: "Исходный код на "
+        footer: "Исходный код на ",
+        startOrderLabel: "Ходит первым:",
+        startPlayer: "Игрок",
+        startComputer: "Компьютер"
     },
     en: {
         gameTitle: "Tic Tac Toe",
@@ -54,10 +55,12 @@ const i18n = {
         xWins: "X wins!",
         oWins: "O wins!",
         draw: "Draw!",
-        footer: "Source code on "
+        footer: "Source code on ",
+        startOrderLabel: "First move:",
+        startPlayer: "Player",
+        startComputer: "Computer"
     }
 };
-
 let currentLang = 'ru'; // Текущий язык
 
 // Функция блокировки игрового поля
@@ -75,20 +78,16 @@ function unlockGameField() {
 function handleCellClick(event) {
     const clickedCell = event.target;
     const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
-
     console.log(`Clicked cell index: ${clickedCellIndex}`);
     console.log(`Current player: ${currentPlayer}, Game active: ${gameActive}`);
-
     // Проверяем, можно ли сделать ход
     if (board[clickedCellIndex] !== '' || !gameActive) {
         console.log('Invalid move. Returning...');
         return;
     }
-
     // Обновляем доску и проверяем результат
     updateBoard(clickedCell, clickedCellIndex);
     handleResultValidation();
-
     // Если игра против компьютера и игра ещё активна
     if (aiMode && gameActive && currentPlayer === computerRole) {
         console.log('AI is making a move...');
@@ -153,15 +152,32 @@ function announce(message) {
 
 function resetGame() {
     board = ['', '', '', '', '', '', '', '', ''];
-    currentPlayer = playerRole;
     gameActive = true;
-    unlockGameField(); // Разблокируем поле при перезапуске игры
+    unlockGameField();
+
+    // Определяем кто ходит первым
+    if (aiMode) {
+        const startOrder = document.querySelector('input[name="startOrder"]:checked').value;
+        currentPlayer = startOrder === 'player' ? playerRole : computerRole;
+
+        // Если первым ходит компьютер
+        if (currentPlayer === computerRole) {
+            lockGameField();
+            setTimeout(() => {
+                aiMove();
+                unlockGameField();
+            }, 500);
+        }
+    } else {
+        currentPlayer = playerRole;
+    }
+
     cells.forEach(cell => {
         cell.textContent = '';
         cell.removeAttribute('disabled');
         cell.classList.remove('win-cell');
-        cell.style.transform = 'scale(1)'; // Сбрасываем анимацию
-        cell.style.boxShadow = 'none'; // Сбрасываем тени
+        cell.style.transform = 'scale(1)';
+        cell.style.boxShadow = 'none';
     });
     announce(i18n[currentLang].gameTitle);
     console.log('Game reset.');
@@ -185,8 +201,6 @@ function aiMove() {
         updateBoard(cells[move], move);
         handleResultValidation();
     }
-
-    // Разблокируем поле после хода компьютера
     if (gameActive) {
         unlockGameField();
     }
@@ -196,7 +210,6 @@ function minimax(newBoard, depth, isMaximizing) {
     if (checkWin(newBoard, computerRole)) return 10 - depth;
     if (checkWin(newBoard, playerRole)) return depth - 10;
     if (isBoardFull(newBoard)) return 0;
-
     if (isMaximizing) {
         let bestScore = -Infinity;
         for (let i = 0; i < newBoard.length; i++) {
@@ -235,7 +248,6 @@ function highlightWinningCombo() {
         if (condition.every(index => board[index] === currentPlayer)) {
             condition.forEach(index => {
                 cells[index].classList.add('win-cell');
-                // Добавляем анимацию победы
                 cells[index].style.transition = 'all 0.5s ease';
                 cells[index].style.transform = 'scale(1.1)';
                 cells[index].style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.8)';
@@ -247,7 +259,6 @@ function highlightWinningCombo() {
 // Функция смены языка
 function setLanguage(lang) {
     currentLang = lang;
-    // Обновляем текст на странице
     document.getElementById('gameTitle').textContent = i18n[lang].gameTitle;
     document.getElementById('reset').textContent = i18n[lang].restart;
     document.querySelector('label[for="mode-ai"]').textContent = i18n[lang].modeAI;
@@ -259,7 +270,8 @@ function setLanguage(lang) {
     document.querySelector('label[for="lang-ru"]').textContent = 'RU';
     document.querySelector('label[for="lang-en"]').textContent = 'EN';
     document.querySelector('footer').innerHTML = `${i18n[lang].footer} <a href="https://github.com/mister-admin/tic-tac-toe" target="_blank">GitHub</a>`;
-    // Сохраняем язык в localStorage
+    document.querySelector('label[for="start-player"]').textContent = i18n[lang].startPlayer;
+    document.querySelector('label[for="start-computer"]').textContent = i18n[lang].startComputer;
     localStorage.setItem('language', lang);
 }
 
@@ -292,10 +304,8 @@ class SoundManager {
 }
 
 const soundManager = new SoundManager();
-
 cells.forEach(cell => cell.addEventListener('click', handleCellClick));
 resetButton.addEventListener('click', resetGame);
-
 themeRadios.forEach(radio => radio.addEventListener('change', () => {
     const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
     if (selectedTheme === 'dark') {
@@ -308,6 +318,8 @@ themeRadios.forEach(radio => radio.addEventListener('change', () => {
 
 modeRadios.forEach(radio => radio.addEventListener('change', () => {
     aiMode = radio.value === 'ai';
+    const startOrderGroup = document.getElementById('startOrderGroup');
+    startOrderGroup.style.display = aiMode ? 'block' : 'none';
     resetGame();
 }));
 
@@ -316,6 +328,15 @@ playerRadios.forEach(radio => radio.addEventListener('change', () => {
     computerRole = playerRole === 'X' ? 'O' : 'X';
     resetGame();
 }));
+
+// Сохранение выбора первого хода
+document.querySelectorAll('input[name="startOrder"]').forEach(radio => {
+    radio.addEventListener('change', () => localStorage.setItem('startOrder', radio.value));
+});
+
+// При загрузке страницы восстановим выбор
+const savedStartOrder = localStorage.getItem('startOrder') || 'player';
+document.querySelector(`input[name="startOrder"][value="${savedStartOrder}"]`).checked = true;
 
 // Инициализация игры
 resetGame();
