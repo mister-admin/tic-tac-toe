@@ -25,38 +25,30 @@ const i18n = {
     ru: {
         gameTitle: "Крестики-нолики",
         restart: "Начать заново",
-        modeLabel: "Режим игры",
-        modeAI: "Против компьютера",
-        modeTwoPlayers: "Вдвоём",
-        playerLabel: "Играть за",
-        themeLabel: "Тема",
-        themeClassic: "☀️ Светлая",
-        themeDark: "🌙 Тёмная",
-        langLabel: "Язык",
+        modeAI: "Против ИИ",
+        modeTwoPlayers: "Два игрока",
+        playerLabel: "Ваша роль",
+        themeClassic: "☀️ Светлая тема",
+        themeDark: "🌙 Тёмная тема",
         xWins: "Победил X!",
         oWins: "Победил O!",
         draw: "Ничья!",
         footer: "Исходный код на ",
-        startOrderLabel: "Ходит первым:",
         startPlayer: "Игрок",
         startComputer: "Компьютер"
     },
     en: {
         gameTitle: "Tic Tac Toe",
         restart: "Restart",
-        modeLabel: "Game Mode",
-        modeAI: "Against Computer",
-        modeTwoPlayers: "Two Players",
-        playerLabel: "Play as",
-        themeLabel: "Theme",
-        themeClassic: "☀️ Light",
-        themeDark: "🌙 Dark",
-        langLabel: "Language",
+        modeAI: "VS AI",
+        modeTwoPlayers: "Two players",
+        playerLabel: "Your role",
+        themeClassic: "☀️ Light theme",
+        themeDark: "🌙 Dark theme",
         xWins: "X wins!",
         oWins: "O wins!",
         draw: "Draw!",
         footer: "Source code on ",
-        startOrderLabel: "First move:",
         startPlayer: "Player",
         startComputer: "Computer"
     }
@@ -75,27 +67,31 @@ function unlockGameField() {
     console.log('Field unlocked.');
 }
 
+// Функция блокировки настроек
+function lockSettings() {
+    document.querySelectorAll('.settings-group').forEach(group => 
+        group.classList.add('disabled')
+    );
+}
+
+// Функция разблокировки настроек
+function unlockSettings() {
+    document.querySelectorAll('.settings-group').forEach(group => 
+        group.classList.remove('disabled')
+    );
+}
+
 function handleCellClick(event) {
     const clickedCell = event.target;
     const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
-    console.log(`Clicked cell index: ${clickedCellIndex}`);
-    console.log(`Current player: ${currentPlayer}, Game active: ${gameActive}`);
-    // Проверяем, можно ли сделать ход
-    if (board[clickedCellIndex] !== '' || !gameActive) {
-        console.log('Invalid move. Returning...');
-        return;
-    }
-    // Обновляем доску и проверяем результат
+    if (board[clickedCellIndex] !== '' || !gameActive) return;
+
     updateBoard(clickedCell, clickedCellIndex);
     handleResultValidation();
-    // Если игра против компьютера и игра ещё активна
+
     if (aiMode && gameActive && currentPlayer === computerRole) {
-        console.log('AI is making a move...');
-        lockGameField(); // Блокируем поле перед ходом компьютера
-        setTimeout(aiMove, 500); // Добавляем задержку для ИИ
-    } else if (!aiMode) {
-        // В режиме "вдвоём" поле не блокируется
-        unlockGameField();
+        lockGameField();
+        setTimeout(aiMove, 500);
     }
 }
 
@@ -103,73 +99,60 @@ function updateBoard(clickedCell, index) {
     board[index] = currentPlayer;
     clickedCell.textContent = currentPlayer;
     soundManager.play('move');
-    console.log(`Updated board at index ${index} with ${currentPlayer}.`);
 }
 
 function handleResultValidation() {
     let roundWon = false;
     for (let i = 0; i < winningConditions.length; i++) {
-        const winCondition = winningConditions[i];
-        let a = board[winCondition[0]];
-        let b = board[winCondition[1]];
-        let c = board[winCondition[2]];
-        if (a === '' || b === '' || c === '') {
-            continue;
-        }
-        if (a === b && b === c) {
+        const [a, b, c] = winningConditions[i];
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
             roundWon = true;
             break;
         }
     }
+
     if (roundWon) {
         announce(currentPlayer === 'X' ? i18n[currentLang].xWins : i18n[currentLang].oWins);
         gameActive = false;
         highlightWinningCombo();
         soundManager.play('win');
-        console.log(`${currentPlayer} wins!`);
+        unlockSettings();
         return;
     }
-    let roundDraw = !board.includes('');
-    if (roundDraw) {
+
+    if (!board.includes('')) {
         announce(i18n[currentLang].draw);
         gameActive = false;
         soundManager.play('draw');
-        console.log('Game ended in a draw.');
+        unlockSettings();
         return;
     }
-    handlePlayerChange();
-    console.log(`Switched player to ${currentPlayer}.`);
-}
 
-function handlePlayerChange() {
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
 }
 
 function announce(message) {
-    const messageElement = document.getElementById('gameTitle');
-    messageElement.textContent = message;
+    document.getElementById('gameTitle').textContent = message;
 }
 
 function resetGame() {
     board = ['', '', '', '', '', '', '', '', ''];
     gameActive = true;
-    unlockGameField();
+    unlockSettings();
 
-    // Определяем кто ходит первым
     if (aiMode) {
         const startOrder = document.querySelector('input[name="startOrder"]:checked').value;
         currentPlayer = startOrder === 'player' ? playerRole : computerRole;
 
-        // Если первым ходит компьютер
         if (currentPlayer === computerRole) {
             lockGameField();
-            setTimeout(() => {
-                aiMove();
-                unlockGameField();
-            }, 500);
+            setTimeout(aiMove, 500);
+        } else {
+            unlockGameField();
         }
     } else {
         currentPlayer = playerRole;
+        unlockGameField();
     }
 
     cells.forEach(cell => {
@@ -179,8 +162,8 @@ function resetGame() {
         cell.style.transform = 'scale(1)';
         cell.style.boxShadow = 'none';
     });
+
     announce(i18n[currentLang].gameTitle);
-    console.log('Game reset.');
 }
 
 function aiMove() {
@@ -197,19 +180,20 @@ function aiMove() {
             }
         }
     }
+
     if (move !== undefined) {
         updateBoard(cells[move], move);
         handleResultValidation();
     }
-    if (gameActive) {
-        unlockGameField();
-    }
+
+    if (gameActive) unlockGameField();
 }
 
 function minimax(newBoard, depth, isMaximizing) {
     if (checkWin(newBoard, computerRole)) return 10 - depth;
     if (checkWin(newBoard, playerRole)) return depth - 10;
     if (isBoardFull(newBoard)) return 0;
+
     if (isMaximizing) {
         let bestScore = -Infinity;
         for (let i = 0; i < newBoard.length; i++) {
@@ -256,7 +240,6 @@ function highlightWinningCombo() {
     });
 }
 
-// Функция смены языка
 function setLanguage(lang) {
     currentLang = lang;
     document.getElementById('gameTitle').textContent = i18n[lang].gameTitle;
@@ -267,26 +250,21 @@ function setLanguage(lang) {
     document.querySelector('label[for="player-O"]').textContent = `O (${i18n[lang].playerLabel})`;
     document.querySelector('label[for="theme-classic"]').textContent = i18n[lang].themeClassic;
     document.querySelector('label[for="theme-dark"]').textContent = i18n[lang].themeDark;
-    document.querySelector('label[for="lang-ru"]').textContent = 'RU';
-    document.querySelector('label[for="lang-en"]').textContent = 'EN';
-    document.querySelector('footer').innerHTML = `${i18n[lang].footer} <a href="https://github.com/mister-admin/tic-tac-toe" target="_blank">GitHub</a>`;
     document.querySelector('label[for="start-player"]').textContent = i18n[lang].startPlayer;
     document.querySelector('label[for="start-computer"]').textContent = i18n[lang].startComputer;
+    document.querySelector('footer').innerHTML = `${i18n[lang].footer} <a href="https://github.com/mister-admin/tic-tac-toe" target="_blank">GitHub</a>`;
     localStorage.setItem('language', lang);
 }
 
-// Обработчик изменения языка
 langRadios.forEach(radio => radio.addEventListener('change', () => {
     const selectedLang = document.querySelector('input[name="lang"]:checked').value;
     setLanguage(selectedLang);
 }));
 
-// При загрузке страницы
 const savedLang = localStorage.getItem('language') || 'ru';
 setLanguage(savedLang);
 document.querySelector(`input[name="lang"][value="${savedLang}"]`).checked = true;
 
-// Звуковые эффекты
 class SoundManager {
     constructor() {
         this.sounds = {
@@ -306,6 +284,7 @@ class SoundManager {
 const soundManager = new SoundManager();
 cells.forEach(cell => cell.addEventListener('click', handleCellClick));
 resetButton.addEventListener('click', resetGame);
+
 themeRadios.forEach(radio => radio.addEventListener('change', () => {
     const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
     if (selectedTheme === 'dark') {
@@ -329,14 +308,11 @@ playerRadios.forEach(radio => radio.addEventListener('change', () => {
     resetGame();
 }));
 
-// Сохранение выбора первого хода
 document.querySelectorAll('input[name="startOrder"]').forEach(radio => {
     radio.addEventListener('change', () => localStorage.setItem('startOrder', radio.value));
 });
 
-// При загрузке страницы восстановим выбор
 const savedStartOrder = localStorage.getItem('startOrder') || 'player';
 document.querySelector(`input[name="startOrder"][value="${savedStartOrder}"]`).checked = true;
 
-// Инициализация игры
 resetGame();
