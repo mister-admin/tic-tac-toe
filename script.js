@@ -34,8 +34,8 @@ const i18n = {
         oWins: "Победил O!",
         draw: "Ничья!",
         footer: "Исходный код на ",
-        startPlayer: "Игрок",
-        startComputer: "Компьютер"
+        startPlayer: "Игрок первый",
+        startComputer: "Компьютер первый"
     },
     en: {
         gameTitle: "Tic Tac Toe",
@@ -49,8 +49,8 @@ const i18n = {
         oWins: "O wins!",
         draw: "Draw!",
         footer: "Source code on ",
-        startPlayer: "Player",
-        startComputer: "Computer"
+        startPlayer: "Player first",
+        startComputer: "Computer first"
     }
 };
 let currentLang = 'ru'; // Текущий язык
