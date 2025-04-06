@@ -54,40 +54,33 @@ const i18n = {
     }
 };
 let currentLang = 'ru'; // Текущий язык
-
 // Функция блокировки игрового поля
 function lockGameField() {
     cells.forEach(cell => cell.setAttribute('disabled', true));
 }
-
 // Функция разблокировки игрового поля
 function unlockGameField() {
     cells.forEach(cell => cell.removeAttribute('disabled'));
 }
-
 // Обработчик клика по ячейке
 function handleCellClick(event) {
     if (!gameActive) return;
     const clickedCell = event.target;
     const index = parseInt(clickedCell.dataset.index);
     if (board[index] !== '') return;
-
     updateBoard(clickedCell, index);
     handleResultValidation();
-
     if (aiMode && gameActive && currentPlayer === computerRole) {
         lockGameField();
         setTimeout(aiMove, 300); // Уменьшена задержка
     }
 }
-
 // Обновление доски
 function updateBoard(clickedCell, index) {
     board[index] = currentPlayer;
     clickedCell.textContent = currentPlayer;
     soundManager.play('move');
 }
-
 // Проверка результата
 function handleResultValidation() {
     let roundWon = false;
@@ -98,7 +91,6 @@ function handleResultValidation() {
             break;
         }
     }
-
     if (roundWon) {
         announce(currentPlayer === 'X' ? i18n[currentLang].xWins : i18n[currentLang].oWins);
         gameActive = false;
@@ -106,38 +98,39 @@ function handleResultValidation() {
         soundManager.play('win');
         return;
     }
-
     if (!board.includes('')) {
         announce(i18n[currentLang].draw);
         gameActive = false;
         soundManager.play('draw');
         return;
     }
-
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
 }
-
 // Объявление победителя или ничьи
 function announce(message) {
     document.getElementById('gameTitle').textContent = message;
 }
-
 // Перезапуск игры
 function resetGame() {
     board = ['', '', '', '', '', '', '', '', ''];
     gameActive = true;
-
     aiMode = document.querySelector('input[name="mode"]:checked').value === 'ai';
+    
+    // Управление видимостью блока выбора первого хода
+    const startOrderGroup = document.getElementById('startOrderGroup');
+    if (aiMode) {
+        startOrderGroup.style.display = 'block';
+    } else {
+        startOrderGroup.style.display = 'none';
+    }
+    
     playerRole = document.querySelector('input[name="player"]:checked').value;
     computerRole = playerRole === 'X' ? 'O' : 'X';
-
+    
     if (aiMode) {
         const startOrder = document.querySelector('input[name="startOrder"]:checked').value;
         currentPlayer = startOrder === 'player' ? playerRole : computerRole;
-
-        const startOrderGroup = document.getElementById('startOrderGroup');
-        startOrderGroup.style.display = aiMode ? 'block' : 'none';
-
+        
         if (currentPlayer === computerRole) {
             lockGameField();
             setTimeout(aiMove, 300);
@@ -148,7 +141,7 @@ function resetGame() {
         currentPlayer = playerRole;
         unlockGameField();
     }
-
+    
     cells.forEach(cell => {
         cell.textContent = '';
         cell.removeAttribute('disabled');
@@ -156,10 +149,9 @@ function resetGame() {
         cell.style.transform = 'scale(1)';
         cell.style.boxShadow = 'none';
     });
-
+    
     announce(i18n[currentLang].gameTitle);
 }
-
 // Ход компьютера
 function aiMove() {
     let bestScore = -Infinity, move;
@@ -171,21 +163,17 @@ function aiMove() {
             if (score > bestScore) [bestScore, move] = [score, i];
         }
     }
-
     if (move !== undefined) {
         updateBoard(cells[move], move);
         handleResultValidation();
     }
-
     if (gameActive) unlockGameField();
 }
-
 // Минимаксный алгоритм
 function minimax(newBoard, depth, isMaximizing) {
     if (checkWin(newBoard, computerRole)) return 10 - depth;
     if (checkWin(newBoard, playerRole)) return depth - 10;
     if (isBoardFull(newBoard)) return 0;
-
     if (isMaximizing) {
         let bestScore = -Infinity;
         for (let i = 0; i < newBoard.length; i++) {
@@ -210,17 +198,14 @@ function minimax(newBoard, depth, isMaximizing) {
         return bestScore;
     }
 }
-
 // Проверка победы
 function checkWin(board, player) {
     return winningConditions.some(condition => condition.every(index => board[index] === player));
 }
-
 // Проверка заполненности доски
 function isBoardFull(board) {
     return !board.includes('');
 }
-
 // Подсветка выигрышной комбинации
 function highlightWinningCombo() {
     winningConditions.forEach(condition => {
@@ -234,7 +219,6 @@ function highlightWinningCombo() {
         }
     });
 }
-
 // Смена языка
 function setLanguage(lang) {
     currentLang = lang;
@@ -251,13 +235,11 @@ function setLanguage(lang) {
     document.querySelector('footer').innerHTML = `${i18n[lang].footer} <a href="https://github.com/mister-admin/tic-tac-toe" target="_blank">GitHub</a>`;
     localStorage.setItem('language', lang);
 }
-
 // Обработчики настроек
 langRadios.forEach(radio => radio.addEventListener('change', () => {
     const selectedLang = document.querySelector('input[name="lang"]:checked').value;
     setLanguage(selectedLang);
 }));
-
 themeRadios.forEach(radio => radio.addEventListener('change', () => {
     const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
     if (selectedTheme === 'dark') {
@@ -267,26 +249,23 @@ themeRadios.forEach(radio => radio.addEventListener('change', () => {
     }
     localStorage.setItem('theme', selectedTheme);
 }));
-
 modeRadios.forEach(radio => radio.addEventListener('change', resetGame));
 playerRadios.forEach(radio => radio.addEventListener('change', resetGame));
 document.querySelectorAll('input[name="startOrder"]').forEach(radio => 
     radio.addEventListener('change', resetGame)
 );
-
 // Инициализация игры
 document.addEventListener('DOMContentLoaded', () => {
     const savedLang = localStorage.getItem('language') || 'ru';
     setLanguage(savedLang);
     document.querySelector(`input[name="lang"][value="${savedLang}"]`).checked = true;
-
+    
     const initialMode = document.querySelector('input[name="mode"]:checked').value;
     const startOrderGroup = document.getElementById('startOrderGroup');
     startOrderGroup.style.display = initialMode === 'ai' ? 'block' : 'none';
-
+    
     resetGame();
 });
-
 // Звуковые эффекты
 class SoundManager {
     constructor() {
@@ -303,7 +282,6 @@ class SoundManager {
         }
     }
 }
-
 const soundManager = new SoundManager();
 cells.forEach(cell => cell.addEventListener('click', handleCellClick));
 resetButton.addEventListener('click', resetGame);
