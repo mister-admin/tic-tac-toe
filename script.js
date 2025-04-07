@@ -38,7 +38,7 @@ const i18n = {
         startComputer: "Компьютер первый"
     },
     en: {
-        gameTitle: "Tic Tac Toe",
+        gameTitle: "Tic-Tac-Toe",
         restart: "Restart",
         modeAI: "VS AI",
         modeTwoPlayers: "Two players",
