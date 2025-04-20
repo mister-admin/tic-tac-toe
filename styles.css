@@ -1,39 +1,152 @@
 /* Root variables */
 :root {
-    --bg-color: #f9f5e3; /* Тёплый бежевый */
-    --cell-color: #fff8e1; /* Светлый бежевый */
-    --text-color: #5a3e36; /* Тёмный коричневый */
-    --button-bg: #ff8c42; /* Тёплый оранжевый */
-    --button-text: #ffffff; /* Белый */
-    --border-color: #d4a373; /* Светлый коричневый */
+    --bg-color: #f9f5e3; /* Светлая тема: тёплый бежевый */
+    --cell-color: #fff8e1; /* Светлая тема: светлый бежевый */
+    --text-color: #5a3e36; /* Светлая тема: тёмный коричневый */
+    --button-bg: #ff8c42; /* Светлая тема: тёплый оранжевый */
+    --button-text: #ffffff; /* Белый текст */
+    --border-color: #d4a373; /* Светлая тема: светлый коричневый */
     --x-color: #e76f51; /* Тёплый красный */
     --o-color: #2a9d8f; /* Тёплый зелёный */
 }
+
 .dark-theme {
-    --bg-color: #2b2d42; /* Тёмный синий */
-    --cell-color: #404258; /* Тёмный серый */
-    --text-color: #edf2f4; /* Светлый серый */
-    --button-bg: #4cc9f0; /* Светлый голубой */
-    --button-text: #2b2d42; /* Тёмный синий */
-    --border-color: #8d99ae; /* Серый */
+    --bg-color: #2b2d42; /* Тёмная тема: тёмный синий */
+    --cell-color: #404258; /* Тёмная тема: тёмный серый */
+    --text-color: #edf2f4; /* Тёмная тема: светлый серый */
+    --button-bg: #4cc9f0; /* Тёмная тема: светлый голубой */
+    --button-text: #2b2d42; /* Тёмная тема: тёмный синий */
+    --border-color: #8d99ae; /* Тёмная тема: серый */
     --x-color: #ef233c; /* Яркий красный */
     --o-color: #80ed99; /* Светлый зелёный */
 }
 
 /* General styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: 'Arial', sans-serif;
-    margin: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
-    padding: 80px 20px 20px; /* Отступ под GitHub Corner */
+    padding: 80px 20px 20px; /* Отступ для GitHub Corner */
+    -webkit-tap-highlight-color: transparent; /* Удаление синей подсветки */
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding-top: 20px;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Game board */
+.game-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(80px, 1fr));
+    gap: 10px;
+    justify-content: center;
+    margin: 20px auto;
+    max-width: 320px;
+}
+
+.cell {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Квадратные ячейки */
+    background-color: var(--cell-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    cursor: pointer;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    user-select: none;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cell:hover:not([disabled]) {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.cell[disabled] {
+    pointer-events: none;
+    opacity: 0.7;
+    filter: grayscale(30%);
+    cursor: not-allowed;
+}
+
+/* Controls */
+.controls {
+    margin: 20px 0;
+}
+
+.controls button {
+    width: 100%;
+    max-width: 200px;
+    padding: 12px 24px;
+    font-size: 1em;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+.controls button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Settings */
+.settings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+    max-width: 800px;
+}
+
+.settings-group {
+    background-color: var(--cell-color);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.settings-group label {
+    display: block;
+    margin: 8px 0;
+    font-weight: bold;
+}
+
+.settings-group input[type="radio"] {
+    margin-right: 10px;
+}
+
+/* Footer */
+footer {
+    margin-top: 20px;
+    font-size: 0.8em;
+    color: var(--text-color);
+    text-align: center;
+    padding: 10px;
 }
 
 /* GitHub Corner */
@@ -61,7 +174,7 @@ body {
         height: 60px;
         transform: scale(0.7);
     }
-    
+
     .github-corner:hover .octo-arm {
         animation: none;
     }
@@ -71,109 +184,10 @@ body {
     filter: brightness(120%);
 }
 
-/* Остальные стили без изменений */
-.game-container {
-    display: grid;
-    grid-template-columns: repeat(3, 100px);
-    grid-gap: 5px;
-    margin: 15px auto;
-    justify-content: center;
-}
-
-.cell {
-    width: 100px;
-    height: 100px;
-    background-color: var(--cell-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2em;
-    cursor: pointer;
-    border: 2px solid var(--border-color);
-    border-radius: 10px;
-    user-select: none;
-    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.cell:hover:not([disabled]) {
-    background-color: #f0f0f0;
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.cell[disabled] {
-    pointer-events: none;
-    opacity: 0.7;
-    filter: grayscale(30%);
-    cursor: not-allowed;
-}
-
-.controls {
-    margin-top: 15px;
-    margin-bottom: 10px;
-    text-align: center;
-    animation: fadeIn 1s ease-in-out;
-}
-
-.controls button {
-    margin: 0 5px;
-    padding: 8px 16px;
-    font-size: 1em;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background-color: var(--button-bg);
-    color: var(--button-text);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.controls button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.settings {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    justify-content: center;
-    margin-bottom: 15px;
-}
-
-.settings-group {
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    transition: opacity 0.3s ease;
-}
-
-.settings-group.disabled {
-    opacity: 0.6;
-    pointer-events: none;
-}
-
-.settings-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 1em;
-    cursor: pointer;
-}
-
-.settings-group input[type="radio"] {
-    margin-right: 5px;
-}
-
+/* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
-}
-
-@keyframes slideIn {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes winAnimation {
@@ -189,12 +203,4 @@ body {
 
 .win-cell {
     animation: winAnimation 1s ease infinite, glow 1.5s alternate infinite;
-}
-
-footer {
-    margin-top: 15px;
-    font-size: 0.8em;
-    color: var(--text-color);
-    text-align: center;
-    animation: fadeIn 1s ease-in-out;
 }
