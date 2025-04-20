@@ -8,7 +8,8 @@
     --border-color: #d4a373; /* Светлый коричневый */
     --x-color: #e76f51; /* Тёплый красный */
     --o-color: #2a9d8f; /* Тёплый зелёный */
-    --github-corner-fill: #151513; /* Темный для светлой темы */
+    --github-corner-fill: #d4a373; /* Коричневый для светлой темы */
+    --octocat-color: transparent; /* Прозрачный котик */
 }
 .dark-theme {
     --bg-color: #2b2d42; /* Тёмный синий */
@@ -19,7 +20,8 @@
     --border-color: #8d99ae; /* Серый */
     --x-color: #ef233c; /* Яркий красный */
     --o-color: #80ed99; /* Светлый зелёный */
-    --github-corner-fill: #edf2f4; /* Светлый для тёмной темы */
+    --github-corner-fill: #edf2f4; /* Белый для тёмной темы */
+    --octocat-color: transparent; /* Прозрачный котик */
 }
 
 /* General styles */
