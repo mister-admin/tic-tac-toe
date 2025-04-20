@@ -174,11 +174,15 @@ footer {
 
 /* GitHub Corner */
 .github-corner {
-    position: absolute; /* Позиционируем относительно .container */
-    top: 0;
-    right: 0;
-    z-index: 1; /* Чтобы не перекрывать другие элементы */
-    margin: 20px; /* Отступ от краев контейнера */
+    position: absolute; /* Позиционируем относительно body */
+    top: 20px; /* Отступ сверху */
+    right: 20px; /* Отступ справа */
+    z-index: 1000; /* Чтобы не перекрывать другие элементы */
+}
+
+/* Добавьте отступ сверху для body */
+body {
+    padding-top: 80px; /* Значение должно быть больше высоты уголка */
 }
 
 @media (max-width: 500px) {
