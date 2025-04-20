@@ -151,15 +151,51 @@ footer {
 
 /* GitHub Corner */
 .github-corner {
-    position: fixed;
+    position: fixed; /* Фиксированное позиционирование */
     top: 20px;
     right: 20px;
-    z-index: 1000;
+    z-index: 9999; /* Чтобы был поверх всех элементов */
+    transform: scale(1.2); /* Увеличенный размер */
     transition: transform 0.3s ease;
 }
 
+.github-corner svg {
+    width: 100px; /* Увеличенная ширина */
+    height: 100px; /* Увеличенная высота */
+}
+
+/* Анимация при наведении */
 .github-corner:hover .octo-arm {
     animation: octocat-wave 560ms ease-in-out;
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+    .github-corner {
+        transform: scale(0.9);
+    }
+    
+    .github-corner svg {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .github-corner {
+        top: 10px;
+        right: 10px;
+        transform: scale(0.7);
+    }
+    
+    .github-corner svg {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .github-corner:hover .octo-arm {
+        animation: none; /* Отключаем анимацию на мобильных */
+    }
 }
 
 @keyframes octocat-wave {
