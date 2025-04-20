@@ -250,3 +250,22 @@ footer a:hover {
 .cell {
     -webkit-tap-highlight-color: transparent;
 }
+
+/* Стили для тёмной темы */
+.dark-theme .cell {
+    color: var(--text-color); /* Убедитесь, что текст светлый */
+}
+
+.dark-theme .cell:hover:not([disabled]) {
+    background-color: #5a5a5a; /* Темно-серый вместо светлого */
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.dark-theme .cell:active {
+    background-color: #4a4a4a;
+}
+
+.dark-theme .win-cell {
+    background-color: #3a3a3a !important;
+}
