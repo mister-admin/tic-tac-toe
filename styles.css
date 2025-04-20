@@ -152,16 +152,16 @@ footer {
 /* GitHub Corner */
 .github-corner {
     position: fixed; /* Фиксированное позиционирование */
-    top: 20px;
-    right: 20px;
-    z-index: 9999; /* Чтобы был поверх всех элементов */
-    transform: scale(1.2); /* Увеличенный размер */
+    top: 0px;
+    right: 0px;
+    z-index: 1000; /* Чтобы был поверх всех элементов */
+    transform: scale(2.0); /* Увеличенный размер */
     transition: transform 0.3s ease;
 }
 
 .github-corner svg {
-    width: 100px; /* Увеличенная ширина */
-    height: 100px; /* Увеличенная высота */
+    width: 200px; /* Увеличенная ширина */
+    height: 200px; /* Увеличенная высота */
 }
 
 /* Анимация при наведении */
@@ -172,12 +172,12 @@ footer {
 /* Адаптация для мобильных устройств */
 @media (max-width: 768px) {
     .github-corner {
-        transform: scale(0.9);
+        transform: scale(1.6);
     }
     
     .github-corner svg {
-        width: 80px;
-        height: 80px;
+        width: 160px;
+        height: 160px;
     }
 }
 
