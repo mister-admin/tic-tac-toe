@@ -8,8 +8,6 @@
     --border-color: #d4a373; /* Светлый коричневый */
     --x-color: #e76f51; /* Тёплый красный */
     --o-color: #2a9d8f; /* Тёплый зелёный */
-    --github-corner-fill: #d4a373; /* Коричневый для светлой темы */
-    --octocat-color: transparent; /* Прозрачный котик */
 }
 .dark-theme {
     --bg-color: #2b2d42; /* Тёмный синий */
@@ -20,8 +18,6 @@
     --border-color: #8d99ae; /* Серый */
     --x-color: #ef233c; /* Яркий красный */
     --o-color: #80ed99; /* Светлый зелёный */
-    --github-corner-fill: #edf2f4; /* Белый для тёмной темы */
-    --octocat-color: transparent; /* Прозрачный котик */
 }
 
 /* General styles */
@@ -31,23 +27,51 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
-    padding: 20px;
-    padding-top: 80px;
+    padding: 80px 20px 20px; /* Отступ под GitHub Corner */
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding-top: 80px; /* Отступ под GitHub Corner */
+    padding-top: 20px;
 }
 
-h1 {
-    font-size: 2em;
-    margin-bottom: 15px;
-    text-align: center;
-    animation: fadeIn 1s ease-in-out;
+/* GitHub Corner */
+.github-corner {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    transition: transform 0.3s ease;
 }
 
+.github-corner:hover .octo-arm {
+    animation: octocat-wave 560ms ease-in-out;
+}
+
+@keyframes octocat-wave {
+    0%, 100% { transform: rotate(0); }
+    20%, 60% { transform: rotate(-25deg); }
+    40%, 80% { transform: rotate(10deg); }
+}
+
+@media (max-width: 500px) {
+    .github-corner svg {
+        width: 60px;
+        height: 60px;
+        transform: scale(0.7);
+    }
+    
+    .github-corner:hover .octo-arm {
+        animation: none;
+    }
+}
+
+.dark-theme .github-corner svg {
+    filter: brightness(120%);
+}
+
+/* Остальные стили без изменений */
 .game-container {
     display: grid;
     grid-template-columns: repeat(3, 100px);
@@ -173,48 +197,4 @@ footer {
     color: var(--text-color);
     text-align: center;
     animation: fadeIn 1s ease-in-out;
-}
-
-/* GitHub Corner */
-.github-corner {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
-    transition: opacity 0.3s ease;
-}
-
-.github-corner:hover .octo-arm {
-    animation: octocat-wave 560ms ease-in-out;
-}
-
-@keyframes octocat-wave {
-    0%, 100% { transform: rotate(0); }
-    20%, 60% { transform: rotate(-25deg); }
-    40%, 80% { transform: rotate(10deg); }
-}
-
-@media (max-width: 500px) {
-    .github-corner svg {
-        width: 60px;
-        height: 60px;
-    }
-}
-
-@media (max-width: 400px) {
-    .github-corner svg {
-        width: 50px;
-        height: 50px;
-    }
-    .game-container {
-        padding: 10px;
-    }
-    .controls button {
-        padding: 6px 12px;
-        font-size: 0.9em;
-    }
-    .cell {
-        width: 70px;
-        height: 70px;
-    }
 }
