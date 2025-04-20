@@ -34,7 +34,7 @@ const i18n = {
         xWins: "Победил X!",
         oWins: "Победил O!",
         draw: "Ничья!",
-        footer: "Исходный код на ",
+        version: "v1.0.1 Stable",
         startPlayer: "Игрок первый",
         startComputer: "Компьютер первый"
     },
@@ -49,11 +49,12 @@ const i18n = {
         xWins: "X wins!",
         oWins: "O wins!",
         draw: "Draw!",
-        footer: "Source code on ",
+        version: "v1.0.1 Stable",
         startPlayer: "Player first",
         startComputer: "Computer first"
     }
 };
+
 let currentLang = 'ru';
 
 // Функции блокировки и разблокировки игрового поля
@@ -234,7 +235,7 @@ function setLanguage(lang) {
     document.querySelector('label[for="theme-dark"]').textContent = i18n[lang].themeDark;
     document.querySelector('label[for="start-player"]').textContent = i18n[lang].startPlayer;
     document.querySelector('label[for="start-computer"]').textContent = i18n[lang].startComputer;
-    document.querySelector('footer').innerHTML = `${i18n[lang].footer} <a href="https://github.com/mister-admin/tic-tac-toe" target="_blank">GitHub</a>`;
+    document.querySelector('footer span[data-i18n="version"]').textContent = i18n[lang].version;
     localStorage.setItem('language', lang);
 }
 
@@ -287,6 +288,7 @@ class SoundManager {
         }
     }
 }
+
 const soundManager = new SoundManager();
 cells.forEach(cell => cell.addEventListener('click', handleCellClick));
 resetButton.addEventListener('click', resetGame);
