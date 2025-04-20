@@ -229,3 +229,24 @@ footer a:hover {
         height: 70px;
     }
 }
+
+/* Новые стили для убирания выделения */
+*:focus {
+    outline: none !important;
+}
+
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.controls button:focus,
+.cell:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.controls button,
+.cell {
+    -webkit-tap-highlight-color: transparent;
+}
