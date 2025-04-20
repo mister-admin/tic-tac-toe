@@ -34,7 +34,7 @@ const i18n = {
         xWins: "Победил X!",
         oWins: "Победил O!",
         draw: "Ничья!",
-        version: "v1.0.1 Stable",
+        version: "v1.0.2 beta",
         startPlayer: "Игрок первый",
         startComputer: "Компьютер первый"
     },
@@ -49,7 +49,7 @@ const i18n = {
         xWins: "X wins!",
         oWins: "O wins!",
         draw: "Draw!",
-        version: "v1.0.1 Stable",
+        version: "v1.0.2 beta",
         startPlayer: "Player first",
         startComputer: "Computer first"
     }
