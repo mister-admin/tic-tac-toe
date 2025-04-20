@@ -20,7 +20,6 @@ const winningConditions = [
     [0, 4, 8],
     [2, 4, 6]
 ];
-
 // Локализация
 const i18n = {
     ru: {
@@ -54,8 +53,26 @@ const i18n = {
         startComputer: "Computer first"
     }
 };
-
 let currentLang = 'ru';
+
+// Обновленная функция смены языка
+function setLanguage(lang) {
+    currentLang = lang;
+    document.getElementById('gameTitle').textContent = i18n[lang].gameTitle;
+    document.getElementById('reset').textContent = i18n[lang].restart;
+    document.querySelector('label[for="mode-ai"]').textContent = i18n[lang].modeAI;
+    document.querySelector('label[for="mode-twoPlayers"]').textContent = i18n[lang].modeTwoPlayers;
+    document.querySelector('label[for="player-X"]').textContent = `X (${i18n[lang].playerLabel})`;
+    document.querySelector('label[for="player-O"]').textContent = `O (${i18n[lang].playerLabel})`;
+    document.querySelector('label[for="theme-classic"]').textContent = i18n[lang].themeClassic;
+    document.querySelector('label[for="theme-dark"]').textContent = i18n[lang].themeDark;
+    document.querySelector('label[for="start-player"]').textContent = i18n[lang].startPlayer;
+    document.querySelector('label[for="start-computer"]').textContent = i18n[lang].startComputer;
+    document.querySelector('footer span[data-i18n="version"]').textContent = i18n[lang].version;
+    document.querySelector('.github-corner').setAttribute('aria-label', 
+        lang === 'ru' ? 'Исходный код на GitHub' : 'View source on GitHub');
+    localStorage.setItem('language', lang);
+}
 
 // Функции блокировки и разблокировки игрового поля
 function lockGameField() {
@@ -222,23 +239,6 @@ function highlightWinningCombo() {
     });
 }
 
-// Смена языка
-function setLanguage(lang) {
-    currentLang = lang;
-    document.getElementById('gameTitle').textContent = i18n[lang].gameTitle;
-    document.getElementById('reset').textContent = i18n[lang].restart;
-    document.querySelector('label[for="mode-ai"]').textContent = i18n[lang].modeAI;
-    document.querySelector('label[for="mode-twoPlayers"]').textContent = i18n[lang].modeTwoPlayers;
-    document.querySelector('label[for="player-X"]').textContent = `X (${i18n[lang].playerLabel})`;
-    document.querySelector('label[for="player-O"]').textContent = `O (${i18n[lang].playerLabel})`;
-    document.querySelector('label[for="theme-classic"]').textContent = i18n[lang].themeClassic;
-    document.querySelector('label[for="theme-dark"]').textContent = i18n[lang].themeDark;
-    document.querySelector('label[for="start-player"]').textContent = i18n[lang].startPlayer;
-    document.querySelector('label[for="start-computer"]').textContent = i18n[lang].startComputer;
-    document.querySelector('footer span[data-i18n="version"]').textContent = i18n[lang].version;
-    localStorage.setItem('language', lang);
-}
-
 // Обработчики настроек
 langRadios.forEach(radio => radio.addEventListener('change', () => {
     const selectedLang = document.querySelector('input[name="lang"]:checked').value;
@@ -288,7 +288,6 @@ class SoundManager {
         }
     }
 }
-
 const soundManager = new SoundManager();
 cells.forEach(cell => cell.addEventListener('click', handleCellClick));
 resetButton.addEventListener('click', resetGame);
