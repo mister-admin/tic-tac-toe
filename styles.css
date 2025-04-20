@@ -174,8 +174,20 @@ footer a:hover {
 }
 
 /* GitHub Corner */
-.github-corner:hover .octo-arm {
-    animation: octocat-wave 560ms ease-in-out;
+.github-corner {
+    position: absolute; /* Позиционируем относительно .container */
+    top: 0;
+    right: 0;
+    z-index: 10; /* Чтобы не перекрывать другие элементы */
+    margin: 15px; /* Отступ от краев */
+}
+
+/* Контейнер должен иметь position: relative */
+.container {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 60px; /* Чтобы содержимое не перекрывалось уголком */
 }
 
 @keyframes octocat-wave {
