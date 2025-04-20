@@ -9,7 +9,6 @@
     --x-color: #e76f51; /* Тёплый красный */
     --o-color: #2a9d8f; /* Тёплый зелёный */
 }
-
 .dark-theme {
     --bg-color: #2b2d42; /* Тёмный синий */
     --cell-color: #404258; /* Тёмный серый */
@@ -32,7 +31,6 @@ body {
 }
 
 .container {
-    position: relative; /* Создаем контекст позиционирования */
     max-width: 1200px;
     margin: 0 auto;
     padding-top: 80px; /* Отступ под GitHub Corner */
@@ -174,15 +172,14 @@ footer {
 
 /* GitHub Corner */
 .github-corner {
-    position: absolute; /* Позиционируем относительно body */
-    top: 20px; /* Отступ сверху */
-    right: 20px; /* Отступ справа */
-    z-index: 1000; /* Чтобы не перекрывать другие элементы */
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
 }
 
-/* Добавьте отступ сверху для body */
 body {
-    padding-top: 80px; /* Значение должно быть больше высоты уголка */
+    padding-top: 80px;
 }
 
 @media (max-width: 500px) {
@@ -197,16 +194,13 @@ body {
         width: 50px;
         height: 50px;
     }
-
     .game-container {
         padding: 10px;
     }
-
     .controls button {
         padding: 6px 12px;
         font-size: 0.9em;
     }
-
     .cell {
         width: 70px;
         height: 70px;
