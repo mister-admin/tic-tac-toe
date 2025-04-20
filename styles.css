@@ -1,3 +1,4 @@
+/* Root variables */
 :root {
     --bg-color: #f9f5e3; /* Тёплый бежевый */
     --cell-color: #fff8e1; /* Светлый бежевый */
@@ -20,6 +21,7 @@
     --o-color: #80ed99; /* Светлый зелёный */
 }
 
+/* General styles */
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
@@ -27,6 +29,13 @@ body {
     color: var(--text-color);
     transition: background-color 0.3s ease, color 0.3s ease;
     padding: 20px;
+}
+
+.container {
+    position: relative; /* Создаем контекст позиционирования */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 80px; /* Отступ под GitHub Corner */
 }
 
 h1 {
@@ -163,65 +172,23 @@ footer {
     animation: fadeIn 1s ease-in-out;
 }
 
-footer a {
-    color: var(--button-bg);
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-footer a:hover {
-    color: var(--x-color);
-}
-
 /* GitHub Corner */
 .github-corner {
     position: absolute; /* Позиционируем относительно .container */
     top: 0;
     right: 0;
-    z-index: 10; /* Чтобы не перекрывать другие элементы */
-    margin: 15px; /* Отступ от краев */
-}
-
-/* Контейнер должен иметь position: relative */
-.container {
-    position: relative;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-top: 60px; /* Чтобы содержимое не перекрывалось уголком */
-}
-
-@keyframes octocat-wave {
-    0%, 100% { transform: rotate(0); }
-    20%, 60% { transform: rotate(-25deg); }
-    40%, 80% { transform: rotate(10deg); }
+    z-index: 1; /* Чтобы не перекрывать другие элементы */
+    margin: 20px; /* Отступ от краев контейнера */
 }
 
 @media (max-width: 500px) {
-    .github-corner:hover .octo-arm {
-        animation: none;
-    }
-    .github-corner .octo-arm {
-        animation: octocat-wave 560ms ease-in-out;
-    }
-}
-
-@media (max-width: 400px) {
     .github-corner svg {
         width: 60px;
         height: 60px;
     }
-
-    .game-container {
-        width: 90%;
-    }
-
-    .cell {
-        width: 80px;
-        height: 80px;
-    }
 }
 
-@media (max-width: 350px) {
+@media (max-width: 400px) {
     .github-corner svg {
         width: 50px;
         height: 50px;
@@ -240,44 +207,4 @@ footer a:hover {
         width: 70px;
         height: 70px;
     }
-}
-
-/* Новые стили для убирания выделения */
-*:focus {
-    outline: none !important;
-}
-
-* {
-    -webkit-tap-highlight-color: transparent;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-}
-
-.controls button:focus,
-.cell:focus {
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-.controls button,
-.cell {
-    -webkit-tap-highlight-color: transparent;
-}
-
-/* Стили для тёмной темы */
-.dark-theme .cell {
-    color: var(--text-color); /* Убедитесь, что текст светлый */
-}
-
-.dark-theme .cell:hover:not([disabled]) {
-    background-color: #5a5a5a; /* Темно-серый вместо светлого */
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
-.dark-theme .cell:active {
-    background-color: #4a4a4a;
-}
-
-.dark-theme .win-cell {
-    background-color: #3a3a3a !important;
 }
