@@ -1,127 +1,79 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Крестики-нолики</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tic Tac Toe</title>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
-  <!-- GitHub corner -->
-  <a class="github-corner" href="https://github.com/mister-admin/tic-tac-toe" aria-label="View source on GitHub" target="_blank" rel="noopener">
-    <svg viewBox="0 0 250 250" aria-hidden="true">
-      <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
-      <path class="octo-arm" d="M128.3,109.0 ..."></path>
-      <path class="octo-body" d="M115.0,115.0 ..."></path>
-    </svg>
-  </a>
+  <main class="container">
 
-  <main class="app-shell">
-    <!-- Sidebar settings -->
-    <aside class="sidebar">
-      <div class="brand">
-        <h2 id="appTitle" data-i18n="gameTitle">Крестики-нолики</h2>
-        <small class="version" id="appVersion" data-i18n="version">v1.0.2 beta</small>
-      </div>
+    <!-- Заголовок -->
+    <h1 id="gameTitle">Tic Tac Toe</h1>
 
-      <div class="card settings-card" role="region" aria-label="Settings">
-        <h3 data-i18n="settings">Настройки</h3>
-
-        <div class="setting-group">
-          <div class="label" data-i18n="mode">Режим</div>
-          <div class="segmented" id="modeSeg">
-            <input type="radio" id="mode-ai" name="mode" value="ai" checked>
-            <label for="mode-ai" data-i18n="modeAI">Против ИИ</label>
-
-            <input type="radio" id="mode-twoPlayers" name="mode" value="twoPlayers">
-            <label for="mode-twoPlayers" data-i18n="modeTwoPlayers">Два игрока</label>
-          </div>
-        </div>
-
-        <div class="setting-group">
-          <div class="label" data-i18n="role">Роль</div>
-          <div class="segmented" id="roleSeg">
-            <input type="radio" id="player-X" name="player" value="X" checked>
-            <label for="player-X">X</label>
-
-            <input type="radio" id="player-O" name="player" value="O">
-            <label for="player-O">O</label>
-          </div>
-        </div>
-
-        <div class="setting-group">
-          <div class="label" data-i18n="themeLabel">Тема</div>
-          <div class="segmented" id="themeSeg">
-            <input type="radio" id="theme-classic" name="theme" value="classic" checked>
-            <label for="theme-classic" data-i18n="themeClassic">Светлая</label>
-
-            <input type="radio" id="theme-dark" name="theme" value="dark">
-            <label for="theme-dark" data-i18n="themeDark">Тёмная</label>
-          </div>
-        </div>
-
-        <div class="setting-group">
-          <div class="label" data-i18n="language">Язык</div>
-          <div class="segmented" id="langSeg">
-            <input type="radio" id="lang-ru" name="lang" value="ru" checked>
-            <label for="lang-ru">RU</label>
-
-            <input type="radio" id="lang-en" name="lang" value="en">
-            <label for="lang-en">EN</label>
-          </div>
-        </div>
-
-        <div class="setting-group" id="startOrderGroup">
-          <div class="label" data-i18n="firstMove">Первый ход</div>
-          <div class="segmented">
-            <input type="radio" id="start-player" name="startOrder" value="player" checked>
-            <label for="start-player" data-i18n="startPlayer">Игрок</label>
-
-            <input type="radio" id="start-computer" name="startOrder" value="computer">
-            <label for="start-computer" data-i18n="startComputer">Компьютер</label>
-          </div>
-        </div>
-      </div>
-
-      <div class="card actions">
-        <button id="reset" class="btn" data-i18n="restart">Начать заново</button>
-      </div>
-
-      <footer class="sidebar-footer">
-        <small>Made with ❤</small>
-      </footer>
-    </aside>
-
-    <!-- Main content: board and status -->
-    <section class="main">
-      <div class="status-card card">
-        <div class="status-left">
-          <h3 id="gameTitleStatus" data-i18n="gameTitle">Крестики-нолики</h3>
-          <p id="statusText" class="status-text" data-i18n="ready">Готово — ходит X</p>
-        </div>
-        <div class="status-right">
-          <button id="undoBtn" class="icon-btn" title="Undo" aria-label="Undo" hidden>⎌</button>
-        </div>
-      </div>
-
-      <div class="board-wrap card">
-        <div class="game-container" role="grid" aria-label="Tic Tac Toe board">
-          <div class="cell" data-index="0" role="button" tabindex="0"></div>
-          <div class="cell" data-index="1" role="button" tabindex="0"></div>
-          <div class="cell" data-index="2" role="button" tabindex="0"></div>
-          <div class="cell" data-index="3" role="button" tabindex="0"></div>
-          <div class="cell" data-index="4" role="button" tabindex="0"></div>
-          <div class="cell" data-index="5" role="button" tabindex="0"></div>
-          <div class="cell" data-index="6" role="button" tabindex="0"></div>
-          <div class="cell" data-index="7" role="button" tabindex="0"></div>
-          <div class="cell" data-index="8" role="button" tabindex="0"></div>
-        </div>
-      </div>
+    <!-- Игровое поле -->
+    <section class="game-container">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
     </section>
+
+    <!-- Кнопка -->
+    <div class="controls">
+      <button id="reset" data-i18n="reset">Restart</button>
+    </div>
+
   </main>
 
-  <!-- Config (single change point for version etc.) -->
-  <script src="config.js"></script>
+  <!-- Нижняя панель -->
+  <nav class="bottom-nav">
+    <button id="btn-game" class="nav-btn active" title="Game">
+      🎮
+    </button>
+    <button id="btn-settings" class="nav-btn" title="Settings">
+      ⚙️
+    </button>
+    <button id="btn-info" class="nav-btn" title="Info">
+      ℹ️
+    </button>
+  </nav>
+
+  <!-- Панель с настройками -->
+  <aside id="settingsPanel" class="side-panel hidden glass">
+    <h2 data-i18n="settings">Settings</h2>
+    <div class="settings-group">
+      <label><input type="radio" name="mode" value="ai" checked> <span data-i18n="vsAI">Vs AI</span></label>
+      <label><input type="radio" name="mode" value="twoPlayers"> <span data-i18n="twoPlayers">2 Players</span></label>
+    </div>
+    <div class="settings-group">
+      <label><input type="radio" name="player" value="X" checked> X</label>
+      <label><input type="radio" name="player" value="O"> O</label>
+    </div>
+    <div class="settings-group">
+      <label><input type="radio" name="theme" value="light" checked> ☀️ <span data-i18n="lightTheme">Light</span></label>
+      <label><input type="radio" name="theme" value="dark"> 🌙 <span data-i18n="darkTheme">Dark</span></label>
+    </div>
+    <div class="settings-group">
+      <label><input type="radio" name="lang" value="ru"> RU</label>
+      <label><input type="radio" name="lang" value="en" checked> EN</label>
+    </div>
+  </aside>
+
+  <!-- Панель информации -->
+  <aside id="infoPanel" class="side-panel hidden glass">
+    <h2 data-i18n="info">Info</h2>
+    <p>Created by <b>𝙼𝚛. 𝙰𝚍𝚖𝚒𝚗</b></p>
+    <p><span data-i18n="version">Version</span>: <span id="appVersion">v1.0.3</span></p>
+    <p><a href="https://github.com/mister-admin/tic-tac-toe" target="_blank">GitHub</a></p>
+  </aside>
+
   <script src="script.js"></script>
 </body>
 </html>
