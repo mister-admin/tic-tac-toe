@@ -1,79 +1,161 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tic Tac Toe</title>
-  <link rel="stylesheet" href="styles.css"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Крестики-нолики — Liquid Glass</title>
+
+  <!-- стили -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- конфиг (версия) -->
+  <script src="config.js"></script>
 </head>
 <body>
-  <main class="container">
+  <!-- Фоновая декоративная анимация (liquid) -->
+  <div class="liquid-bg" aria-hidden="true">
+    <svg class="liquid-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <filter id="liquidTurb">
+          <feTurbulence baseFrequency="0.009 0.01" numOctaves="2" seed="2" result="t" />
+          <feDisplacementMap in="SourceGraphic" in2="t" scale="10" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#grad1)" filter="url(#liquidTurb)"></rect>
+    </svg>
+  </div>
 
-    <!-- Заголовок -->
-    <h1 id="gameTitle">Tic Tac Toe</h1>
+  <!-- Main app shell -->
+  <main class="app-shell">
+    <header class="topbar glass">
+      <div class="brand">
+        <h1 id="appTitle" data-i18n="gameTitle">Крестики-нолики</h1>
+        <div id="subtitle" class="subtitle" aria-live="polite"> </div>
+      </div>
+    </header>
 
-    <!-- Игровое поле -->
-    <section class="game-container">
-      <div class="cell" data-index="0"></div>
-      <div class="cell" data-index="1"></div>
-      <div class="cell" data-index="2"></div>
-      <div class="cell" data-index="3"></div>
-      <div class="cell" data-index="4"></div>
-      <div class="cell" data-index="5"></div>
-      <div class="cell" data-index="6"></div>
-      <div class="cell" data-index="7"></div>
-      <div class="cell" data-index="8"></div>
+    <section class="content">
+      <div class="panel board-panel glass">
+        <div id="status" class="status" aria-live="polite"></div>
+
+        <div class="board" role="grid" aria-label="Tic Tac Toe board">
+          <div class="cell" data-index="0" tabindex="0" role="button" aria-label="cell 0"></div>
+          <div class="cell" data-index="1" tabindex="0" role="button" aria-label="cell 1"></div>
+          <div class="cell" data-index="2" tabindex="0" role="button" aria-label="cell 2"></div>
+          <div class="cell" data-index="3" tabindex="0" role="button" aria-label="cell 3"></div>
+          <div class="cell" data-index="4" tabindex="0" role="button" aria-label="cell 4"></div>
+          <div class="cell" data-index="5" tabindex="0" role="button" aria-label="cell 5"></div>
+          <div class="cell" data-index="6" tabindex="0" role="button" aria-label="cell 6"></div>
+          <div class="cell" data-index="7" tabindex="0" role="button" aria-label="cell 7"></div>
+          <div class="cell" data-index="8" tabindex="0" role="button" aria-label="cell 8"></div>
+        </div>
+
+        <div class="board-controls">
+          <button id="resetBtn" class="btn primary" data-i18n="restart">Начать заново</button>
+          <button id="undoBtn" class="btn" title="Undo" aria-label="Undo" hidden>↶</button>
+        </div>
+      </div>
     </section>
-
-    <!-- Кнопка -->
-    <div class="controls">
-      <button id="reset" data-i18n="reset">Restart</button>
-    </div>
-
   </main>
 
-  <!-- Нижняя панель -->
-  <nav class="bottom-nav">
-    <button id="btn-game" class="nav-btn active" title="Game">
-      🎮
+  <!-- Bottom navigation (Liquid Glass toolbar) -->
+  <nav class="bottom-nav glass" role="navigation" aria-label="Main navigation">
+    <!-- Game (active by default) -->
+    <button id="nav-game" class="nav-btn active" aria-pressed="true" title="Game">
+      <!-- Animated grid icon (SVG) -->
+      <svg class="icon icon-game" viewBox="0 0 24 24" aria-hidden="true">
+        <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+          <path class="grid-line" d="M3 9h18M3 15h18M9 3v18M15 3v18"></path>
+        </g>
+      </svg>
+      <span class="nav-label" data-i18n="play">Игра</span>
     </button>
-    <button id="btn-settings" class="nav-btn" title="Settings">
-      ⚙️
+
+    <!-- Settings -->
+    <button id="nav-settings" class="nav-btn" aria-pressed="false" title="Settings">
+      <!-- Animated gear SVG -->
+      <svg class="icon icon-gear" viewBox="0 0 24 24" aria-hidden="true">
+        <path class="gear" d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <g class="gear-teeth" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <path d="M19.4 15a7.9 7.9 0 0 0 .1-6l1.8-1.3-2-3.4L17 5.1a8 8 0 0 0-5-.8L11 2H9l-1 2.3a8 8 0 0 0-5 .8L3.6 3.3l-2 3.4L3.4 8.9a7.9 7.9 0 0 0 .1 6L1.7 16.2l2 3.4L7 18.9a8 8 0 0 0 5 .8L13 22h2l1-2.3a8 8 0 0 0 5-.8l1.4 1.5 2-3.4z" fill="none"/>
+        </g>
+      </svg>
+      <span class="nav-label" data-i18n="settings">Настройки</span>
     </button>
-    <button id="btn-info" class="nav-btn" title="Info">
-      ℹ️
+
+    <!-- Info -->
+    <button id="nav-info" class="nav-btn" aria-pressed="false" title="Info">
+      <!-- Animated info SVG -->
+      <svg class="icon icon-info" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M12 8v.01M11 11h2v5h-2z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <span class="nav-label" data-i18n="info">Инфо</span>
     </button>
   </nav>
 
-  <!-- Панель с настройками -->
-  <aside id="settingsPanel" class="side-panel hidden glass">
-    <h2 data-i18n="settings">Settings</h2>
-    <div class="settings-group">
-      <label><input type="radio" name="mode" value="ai" checked> <span data-i18n="vsAI">Vs AI</span></label>
-      <label><input type="radio" name="mode" value="twoPlayers"> <span data-i18n="twoPlayers">2 Players</span></label>
+  <!-- Sliding panels (settings & info) — hidden by default -->
+  <aside id="panel-settings" class="panel-slide glass" aria-hidden="true" role="dialog" aria-label="Settings panel">
+    <h3 data-i18n="settings">Настройки</h3>
+
+    <div class="field">
+      <div class="label" data-i18n="mode">Режим</div>
+      <div class="options">
+        <label><input type="radio" name="mode" value="ai" checked> <span data-i18n="modeAI">Против ИИ</span></label>
+        <label><input type="radio" name="mode" value="twoPlayers"> <span data-i18n="modeTwoPlayers">Два игрока</span></label>
+      </div>
     </div>
-    <div class="settings-group">
-      <label><input type="radio" name="player" value="X" checked> X</label>
-      <label><input type="radio" name="player" value="O"> O</label>
+
+    <div class="field">
+      <div class="label" data-i18n="role">Роль</div>
+      <div class="options">
+        <label><input type="radio" name="player" value="X" checked> X</label>
+        <label><input type="radio" name="player" value="O"> O</label>
+      </div>
     </div>
-    <div class="settings-group">
-      <label><input type="radio" name="theme" value="light" checked> ☀️ <span data-i18n="lightTheme">Light</span></label>
-      <label><input type="radio" name="theme" value="dark"> 🌙 <span data-i18n="darkTheme">Dark</span></label>
+
+    <div class="field">
+      <div class="label" data-i18n="themeLabel">Тема</div>
+      <div class="options">
+        <label><input type="radio" name="theme" value="light"> <span data-i18n="themeClassic">Светлая</span></label>
+        <label><input type="radio" name="theme" value="dark"> <span data-i18n="themeDark">Тёмная</span></label>
+      </div>
     </div>
-    <div class="settings-group">
-      <label><input type="radio" name="lang" value="ru"> RU</label>
-      <label><input type="radio" name="lang" value="en" checked> EN</label>
+
+    <div class="field">
+      <div class="label" data-i18n="language">Язык</div>
+      <div class="options">
+        <label><input type="radio" name="lang" value="ru"> RU</label>
+        <label><input type="radio" name="lang" value="en"> EN</label>
+      </div>
+    </div>
+
+    <div class="field small" id="firstMoveRow">
+      <div class="label" data-i18n="firstMove">Первый ход</div>
+      <div class="options">
+        <label><input type="radio" name="startOrder" value="player" checked> <span data-i18n="startPlayer">Игрок</span></label>
+        <label><input type="radio" name="startOrder" value="computer"> <span data-i18n="startComputer">Компьютер</span></label>
+      </div>
+    </div>
+
+    <div class="actions-row">
+      <button id="applySettings" class="btn primary" data-i18n="apply">Применить</button>
+      <button id="closeSettings" class="btn" data-i18n="close">Закрыть</button>
     </div>
   </aside>
 
-  <!-- Панель информации -->
-  <aside id="infoPanel" class="side-panel hidden glass">
-    <h2 data-i18n="info">Info</h2>
-    <p>Created by <b>𝙼𝚛. 𝙰𝚍𝚖𝚒𝚗</b></p>
-    <p><span data-i18n="version">Version</span>: <span id="appVersion">v1.0.3</span></p>
-    <p><a href="https://github.com/mister-admin/tic-tac-toe" target="_blank">GitHub</a></p>
+  <aside id="panel-info" class="panel-slide glass" aria-hidden="true" role="dialog" aria-label="Information panel">
+    <h3 data-i18n="info">Информация</h3>
+    <p><strong>Created by</strong> 𝙼𝚛. 𝙰𝚍𝚖𝚒𝚗</p>
+    <p><strong data-i18n="version">Версия</strong>: <span id="appVersion">v1.0.0</span></p>
+    <p><a id="repoLink" href="https://github.com/mister-admin/tic-tac-toe" target="_blank" rel="noopener">GitHub / исходники</a></p>
+    <div class="actions-row">
+      <button id="closeInfo" class="btn" data-i18n="close">Закрыть</button>
+    </div>
   </aside>
 
+  <!-- Основной скрипт -->
   <script src="script.js"></script>
 </body>
 </html>
