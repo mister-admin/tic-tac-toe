@@ -1,39 +1,43 @@
 # Крестики-нолики
 
-Это классическая игра в крестики-нолики с искусственным интеллектом.
+Это классическая игра в крестики-нолики с современным интерфейсом и плавными анимациями.
 
 **[Играть онлайн](https://mister-admin.github.io/tic-tac-toe/)**
 
 ## Особенности:
-- Игра против компьютера
-- Поддержка двух игроков
-- Темы оформления (светлая и тёмная)
-- Локализация (русский/английский)
-- Красивые анимации и тёплая цветовая палитра
+
+* Игра против компьютера или вдвоём
+* Автоопределение языка (русский/английский) и темы (светлая/тёмная)
+* Настройки скрыты и доступны по кнопке в меню
+* Переработанный дизайн в стиле *Liquid Glass* с анимированными иконками
+* Раздел «Информация» с версией игры, автором и ссылкой на исходный код
 
 ## Как играть:
-1. Выберите режим игры (против компьютера или вдвоём).
-2. Выберите, за кого играть (X или O).
-3. Нажмите на клетку, чтобы сделать ход.
-4. Наслаждайтесь игрой!
+
+1. Выберите режим игры.
+2. Определите, за кого будете играть (X или O).
+3. Делайте ходы, нажимая на клетки поля.
+4. Наслаждайтесь современной версией классической игры!
 
 ---
 
 # Tic-Tac-Toe
 
-It's a classic game of tic-tac-toe with artificial intelligence.
+A classic tic-tac-toe game with a modern interface and smooth animations.
 
 **[Play online](https://mister-admin.github.io/tic-tac-toe/)**
 
 ## Features:
-- Playing against the computer
-- Support for two players
-- Design themes (light and dark)
-- Localization (Russian/English)
-- Beautiful animations and warm color palette
+
+* Play against the computer or with a friend
+* Automatic detection of language (English/Russian) and theme (light/dark)
+* Settings are hidden by default and accessible from the menu
+* Redesigned UI in *Liquid Glass* style with animated icons
+* "Information" section with version, author, and source code link
 
 ## How to play:
-1. Select a game mode (against the computer or two players).
+
+1. Select the game mode.
 2. Choose your side (X or O).
-3. Click on a square to make a move.
-4. Enjoy the game!
+3. Click a square to make a move.
+4. Enjoy the modern take on a timeless game!
