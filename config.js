@@ -1,2 +1,2 @@
-/* Central config — меняй здесь версию и другие константы */
-const APP_VERSION = 'v1.1.0 beta'; // <-- изменить здесь — и это обновит футер + i18n version
+// Single change point for version and some defaults
+const APP_VERSION = 'v1.1.1 beta'; // <-- поменяй тут версию в один клик
