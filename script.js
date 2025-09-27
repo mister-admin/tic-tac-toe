@@ -1,16 +1,12 @@
-/* Main script - robust, minimal external assumptions.
-   - Loads manifest (if present) for language list with fallback
-   - Dynamically renders language buttons
-   - Segmented buttons (immediate apply)
-   - Panels: toggle, close on outside click, Esc, repeat click
-   - Theme auto-detect + immediate animated transition
-   - SoundManager (graceful)
-   - Restored game logic + minimax AI
+/* Main logic:
+   - restores original game logic (minimax)
+   - loads i18n from lang/*.json
+   - autosets theme & language (with localStorage override)
+   - UI: bottom nav, slide panels, settings apply
+   - accessible keyboard controls, focus, and animations
 */
 
-const APP_VERSION = typeof APP_VERSION !== 'undefined' ? APP_VERSION : 'v1.0.0';
-
-// DOM refs (safe queries)
+/* ---- DOM refs ---- */
 const cells = Array.from(document.querySelectorAll('.cell'));
 const statusEl = document.getElementById('status');
 const resetBtn = document.getElementById('resetBtn');
@@ -23,275 +19,185 @@ const navInfo = document.getElementById('nav-info');
 const panelSettings = document.getElementById('panel-settings');
 const panelInfo = document.getElementById('panel-info');
 
+const applySettingsBtn = document.getElementById('applySettings');
 const closeSettingsBtn = document.getElementById('closeSettings');
 const closeInfoBtn = document.getElementById('closeInfo');
 
-const languagesContainer = document.getElementById('languagesContainer');
-const firstMoveRow = document.getElementById('firstMoveRow');
-
-const authorEl = document.getElementById('author');
 const appVersionEl = document.getElementById('appVersion');
-const repoLink = document.getElementById('repoLink');
+if (typeof APP_VERSION !== 'undefined') appVersionEl.textContent = APP_VERSION;
 
-if (authorEl) authorEl.textContent = 'Mr. Admin';
-if (appVersionEl) appVersionEl.textContent = APP_VERSION;
-
-// STATE
+/* ---- State ---- */
 let board = Array(9).fill('');
 let currentPlayer = 'X';
 let gameActive = true;
 let aiMode = true;
 let playerRole = 'X';
 let computerRole = 'O';
-let movesHistory = [];
+let movesHistory = []; // for undo (basic)
 const winningConditions = [
   [0,1,2],[3,4,5],[6,7,8],
   [0,3,6],[1,4,7],[2,5,8],
   [0,4,8],[2,4,6]
 ];
 
-// sound manager
-class SoundManager {
-  constructor() {
-    this.sounds = {
-      move: new Audio('sounds/beep-07.wav'),
-      win: new Audio('sounds/success-01.wav'),
-      draw: new Audio('sounds/fail-01.wav')
-    };
-  }
-  play(name) {
-    const s = this.sounds[name];
-    if (!s) return;
-    s.currentTime = 0;
-    s.play().catch(()=>{ /* ignore autoplay policy errors */ });
-  }
-}
-const soundManager = new SoundManager();
-
-// i18n
+/* ---- i18n ---- */
 let translations = {};
-let availableLangs = [];
-let currentLang = localStorage.getItem('ttt_lang') || (navigator.language && navigator.language.toLowerCase().startsWith('ru') ? 'ru' : 'en');
-
-function setStatusTemplate(msg){
-  if (typeof msg === 'string') { statusEl.textContent = msg; return; }
-  const tpl = translations['ready'] || 'Ready — {p}';
-  statusEl.textContent = tpl.replace('{p}', currentPlayer);
-  const subtitle = document.getElementById('subtitle');
-  if (subtitle) subtitle.textContent = statusEl.textContent;
-}
-
-// load language manifest (fallback to ru/en)
-async function loadLangList(){
+let currentLang = localStorage.getItem('ttt_lang') || detectBrowserLang();
+async function loadTranslations(lang='ru') {
   try {
-    const res = await fetch('lang/manifest.json', {cache:'no-store'});
-    if (res.ok) {
-      const manifest = await res.json();
-      availableLangs = manifest.map(f => ({code: f.split('.')[0], file: f}));
-      return;
-    }
-  } catch(e){ /* ignore */ }
-  // fallback defaults
-  availableLangs = [{code:'ru', file:'ru.json'}, {code:'en', file:'en.json'}];
-}
-
-function renderLanguageButtons(){
-  if (!languagesContainer) return;
-  languagesContainer.innerHTML = '';
-  availableLangs.forEach(l => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'seg-btn';
-    btn.dataset.value = l.code;
-    btn.setAttribute('aria-pressed', l.code === currentLang ? 'true' : 'false');
-    btn.textContent = l.code;
-    btn.addEventListener('click', () => {
-      // visual
-      languagesContainer.querySelectorAll('.seg-btn').forEach(s => s.setAttribute('aria-pressed','false'));
-      btn.setAttribute('aria-pressed','true');
-      loadTranslations(l.code, l.file);
-    });
-    languagesContainer.appendChild(btn);
-  });
-}
-
-async function loadTranslations(code, file){
-  try {
-    const filename = file || `${code}.json`;
-    const res = await fetch(`lang/${filename}`, {cache:'no-store'});
-    if (!res.ok) throw new Error('not found');
+    const res = await fetch(`lang/${lang}.json`);
+    if (!res.ok) throw new Error('fetch failed');
     translations = await res.json();
-  } catch(e) {
-    // fallback minimal dictionary
-    translations = code === 'en' ? {
-      "gameTitle":"Tic-Tac-Toe","restart":"Restart","ready":"Ready — {p}","xWins":"X wins!","oWins":"O wins!","draw":"Draw!",
-      "settings":"Settings","info":"Info","play":"Play","repo":"GitHub / source","version":"Version","createdByLabel":"Created by",
-      "modeAI":"Vs AI","modeTwoPlayers":"Two players","themeClassic":"Light","themeDark":"Dark","startPlayer":"Player","startComputer":"Computer"
+  } catch (err) {
+    // fallback embedded minimal texts
+    translations = (lang === 'en') ? {
+      "gameTitle":"Tic-Tac-Toe","play":"Play","settings":"Settings","info":"Info","restart":"Restart",
+      "mode":"Mode","modeAI":"Vs AI","modeTwoPlayers":"Two players","role":"Role","themeLabel":"Theme",
+      "themeClassic":"Light","themeDark":"Dark","language":"Language","firstMove":"First move",
+      "startPlayer":"Player","startComputer":"Computer","apply":"Apply","close":"Close",
+      "version":"Version","ready":"Ready — {p} to move","xWins":"X wins!","oWins":"O wins!","draw":"Draw!"
     } : {
-      "gameTitle":"Крестики-нолики","restart":"Начать заново","ready":"Готово — ходит {p}","xWins":"Победил X!","oWins":"Победил O!","draw":"Ничья!",
-      "settings":"Настройки","info":"Инфо","play":"Игра","repo":"GitHub / исходники","version":"Версия","createdByLabel":"Created by",
-      "modeAI":"Против ИИ","modeTwoPlayers":"Два игрока","themeClassic":"Светлая","themeDark":"Тёмная","startPlayer":"Игрок","startComputer":"Компьютер"
+      "gameTitle":"Крестики-нолики","play":"Игра","settings":"Настройки","info":"Инфо","restart":"Начать заново",
+      "mode":"Режим","modeAI":"Против ИИ","modeTwoPlayers":"Два игрока","role":"Роль","themeLabel":"Тема",
+      "themeClassic":"Светлая","themeDark":"Тёмная","language":"Язык","firstMove":"Первый ход",
+      "startPlayer":"Игрок","startComputer":"Компьютер","apply":"Применить","close":"Закрыть",
+      "version":"Версия","ready":"Готово — ходит {p}","xWins":"Победил X!","oWins":"Победил O!","draw":"Ничья!"
     };
   }
-  currentLang = code;
-  localStorage.setItem('ttt_lang', code);
   applyTranslations();
 }
 
 function applyTranslations(){
   document.querySelectorAll('[data-i18n]').forEach(el=>{
     const key = el.getAttribute('data-i18n');
-    if (key && translations[key] !== undefined) el.textContent = translations[key];
+    if (key && translations[key]) el.textContent = translations[key];
   });
-  if (repoLink && translations['repo']) repoLink.textContent = translations['repo'];
+  // status line
   setStatusTemplate();
-  const title = document.getElementById('appTitle');
-  if (title && translations['gameTitle']) title.textContent = translations['gameTitle'];
+  // version
+  if (APP_VERSION) document.querySelectorAll('[data-i18n="version"]').forEach(()=>{}); // handled separately
 }
 
-/* Theme */
+function detectBrowserLang(){
+  const nav = navigator.language || navigator.userLanguage || 'ru';
+  return nav.toLowerCase().startsWith('ru') ? 'ru' : 'en';
+}
+
+/* ---- Theme auto-detection & persistence ---- */
+const savedTheme = localStorage.getItem('ttt_theme');
+if (savedTheme) applyTheme(savedTheme);
+else {
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(prefersDark ? 'dark' : 'light');
+}
+
 function applyTheme(name){
   if (name === 'dark') document.body.classList.add('dark');
   else document.body.classList.remove('dark');
   localStorage.setItem('ttt_theme', name);
 }
 
-/* segmented controls wiring */
-function wireSegmentedControls(){
-  document.querySelectorAll('.segmented[data-group]').forEach(container => {
-    container.addEventListener('click', (e) => {
-      const btn = e.target.closest('.seg-btn');
-      if (!btn) return;
-      // set aria pressed
-      container.querySelectorAll('.seg-btn').forEach(s => s.setAttribute('aria-pressed','false'));
-      btn.setAttribute('aria-pressed','true');
-      const group = container.dataset.group;
-      const value = btn.dataset.value;
-      applySetting(group, value);
-    });
-  });
+/* ---- UI helpers ---- */
+function setStatusTemplate(msg){
+  if (msg) { statusEl.textContent = msg; return; }
+  const tpl = translations['ready'] || 'Ready — {p}';
+  statusEl.textContent = tpl.replace('{p}', currentPlayer);
 }
 
-function applySetting(group, value){
-  switch(group){
-    case 'mode':
-      aiMode = (value === 'ai');
-      localStorage.setItem('ttt_mode', value);
-      firstMoveRow.style.display = aiMode ? 'block' : 'none';
-      resetGame();
-      break;
-    case 'player':
-      playerRole = value;
-      computerRole = playerRole === 'X' ? 'O' : 'X';
-      localStorage.setItem('ttt_player', value);
-      resetGame();
-      break;
-    case 'theme':
-      applyTheme(value);
-      localStorage.setItem('ttt_theme', value);
-      break;
-    case 'startOrder':
-      localStorage.setItem('ttt_start', value);
-      currentPlayer = (value === 'player') ? playerRole : computerRole;
-      resetGame();
-      break;
-    case 'lang':
-      // handled by language buttons
-      break;
-    default: break;
-  }
-}
-
-/* Game rendering */
+/* ---- GAME logic (restored & improved) ---- */
 function renderBoard(){
-  board.forEach((v,i)=>{
-    const el = cells[i];
-    el.textContent = v || '';
-    el.classList.toggle('x', v === 'X');
-    el.classList.toggle('o', v === 'O');
+  board.forEach((val, idx)=>{
+    const el = cells[idx];
+    el.textContent = val || '';
+    el.classList.toggle('x', val === 'X');
+    el.classList.toggle('o', val === 'O');
     el.classList.remove('win');
     el.removeAttribute('aria-disabled');
   });
 }
-function setStatusTemplate(msg){
-  if (msg) { statusEl.textContent = msg; if (subtitle) subtitle.textContent = msg; return; }
-  const tpl = translations['ready'] || 'Ready — {p}';
-  statusEl.textContent = tpl.replace('{p}', currentPlayer);
-  const subtitle = document.getElementById('subtitle');
-  if (subtitle) subtitle.textContent = statusEl.textContent;
-}
 
 function handleCellClick(e){
   if (!gameActive) return;
-  const el = e.currentTarget;
-  const idx = Number(el.dataset.index);
+  const idx = Number(e.currentTarget.dataset.index);
   if (board[idx] !== '') return;
+  // register move
   movesHistory.push(board.slice());
   board[idx] = currentPlayer;
   renderBoard();
-  soundManager.play('move');
+  playMoveEffect(idx);
   checkAfterMove();
 }
 
+function playMoveEffect(idx){
+  const el = cells[idx];
+  el.animate([{ transform:'scale(.9)'},{ transform:'scale(1)' }], { duration:180, easing:'ease-out' });
+}
+
+/* After move */
 function checkAfterMove(){
-  const w = checkWinner();
-  if (w) {
-    setStatusTemplate(w === 'X' ? (translations.xWins || 'X wins!') : (translations.oWins || 'O wins!'));
-    highlightWinner(w);
-    soundManager.play('win');
+  const winner = checkWinner();
+  if (winner) {
+    announce(winner === 'X' ? translations.xWins || 'X wins!' : translations.oWins || 'O wins!');
+    highlightWinner(winner);
     gameActive = false;
     return;
   }
   if (!board.includes('')) {
-    setStatusTemplate(translations.draw || 'Draw!');
-    soundManager.play('draw');
+    announce(translations.draw || 'Draw!');
     gameActive = false;
     return;
   }
   currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
   setStatusTemplate();
-  if (aiMode && gameActive && currentPlayer === computerRole){
+  if (aiMode && gameActive && currentPlayer === computerRole) {
     lockBoard();
-    setTimeout(aiMove, 300);
+    setTimeout(aiMove, 260);
   }
 }
 
-function highlightWinner(w){
+function announce(msg){
+  setStatusTemplate(msg);
+}
+
+function highlightWinner(winner) {
   winningConditions.forEach(cond => {
-    if (cond.every(i => board[i] === w)) {
+    if (cond.every(i => board[i] === winner)) {
       cond.forEach(i => cells[i].classList.add('win'));
     }
   });
 }
 
-/* AI - minimax */
+/* AI (minimax) */
 function aiMove(){
-  let bestScore = -Infinity, move;
+  let bestScore = -Infinity;
+  let move = undefined;
   for (let i=0;i<9;i++){
     if (board[i] === '') {
       board[i] = computerRole;
       const score = minimax(board, 0, false);
       board[i] = '';
-      if (score > bestScore){ bestScore = score; move = i; }
+      if (score > bestScore) { bestScore = score; move = i; }
     }
   }
-  if (move !== undefined){
+  if (move !== undefined) {
     movesHistory.push(board.slice());
     board[move] = computerRole;
     renderBoard();
-    soundManager.play('move');
+    playMoveEffect(move);
     checkAfterMove();
   }
   unlockBoard();
 }
-function minimax(newBoard, depth, isMax){
+
+function minimax(newBoard, depth, isMaximizing){
   if (checkWin(newBoard, computerRole)) return 10 - depth;
   if (checkWin(newBoard, playerRole)) return depth - 10;
   if (!newBoard.includes('')) return 0;
-  if (isMax){
+
+  if (isMaximizing) {
     let best = -Infinity;
-    for (let i=0;i<9;i++){
-      if (newBoard[i] === ''){
+    for (let i=0;i<newBoard.length;i++){
+      if (newBoard[i] === '') {
         newBoard[i] = computerRole;
         best = Math.max(best, minimax(newBoard, depth+1, false));
         newBoard[i] = '';
@@ -300,8 +206,8 @@ function minimax(newBoard, depth, isMax){
     return best;
   } else {
     let best = Infinity;
-    for (let i=0;i<9;i++){
-      if (newBoard[i] === ''){
+    for (let i=0;i<newBoard.length;i++){
+      if (newBoard[i] === '') {
         newBoard[i] = playerRole;
         best = Math.min(best, minimax(newBoard, depth+1, true));
         newBoard[i] = '';
@@ -310,29 +216,47 @@ function minimax(newBoard, depth, isMax){
     return best;
   }
 }
-function checkWin(b, p){ return winningConditions.some(cond => cond.every(i => b[i] === p)); }
+
+function checkWin(b, p){
+  return winningConditions.some(cond => cond.every(i => b[i] === p));
+}
+
 function checkWinner(){
-  for (let cond of winningConditions){
+  for (let cond of winningConditions) {
     const [a,b,c] = cond;
     if (board[a] && board[a] === board[b] && board[a] === board[c]) return board[a];
   }
   return null;
 }
 
-function lockBoard(){ cells.forEach(c => c.setAttribute('aria-disabled','true')); }
-function unlockBoard(){ cells.forEach(c => c.removeAttribute('aria-disabled')); }
+/* Lock/unlock board (UI) */
+function lockBoard(){
+  cells.forEach(c => c.setAttribute('aria-disabled', 'true'));
+}
+function unlockBoard(){
+  cells.forEach(c => c.removeAttribute('aria-disabled'));
+}
 
+/* Reset & undo */
 function resetGame(){
   board = Array(9).fill('');
   movesHistory = [];
   gameActive = true;
-  readSettingsFromUI();
-  // decide starter
-  const start = localStorage.getItem('ttt_start') || 'player';
-  currentPlayer = (aiMode && start === 'computer') ? computerRole : playerRole;
+  // read settings current picks to set player/computer roles & aiMode
+  readSettingsToState();
+  // determine who starts
+  if (aiMode) {
+    const start = document.querySelector('input[name="startOrder"]:checked')?.value || 'player';
+    currentPlayer = (start === 'player') ? playerRole : computerRole;
+  } else {
+    currentPlayer = playerRole;
+  }
   renderBoard();
   setStatusTemplate();
-  if (aiMode && currentPlayer === computerRole) { lockBoard(); setTimeout(aiMove, 260); } else unlockBoard();
+  if (aiMode && currentPlayer === computerRole) {
+    lockBoard();
+    setTimeout(aiMove, 260);
+  } else unlockBoard();
 }
 
 function undoMove(){
@@ -343,119 +267,119 @@ function undoMove(){
   setStatusTemplate();
 }
 
-function readSettingsFromUI(){
-  const m = document.querySelector('.segmented[data-group="mode"] .seg-btn[aria-pressed="true"]');
-  aiMode = m ? (m.dataset.value === 'ai') : true;
-  const p = document.querySelector('.segmented[data-group="player"] .seg-btn[aria-pressed="true"]');
-  playerRole = p ? p.dataset.value : 'X';
+/* ---- Settings wiring ---- */
+function readSettingsToState(){
+  aiMode = document.querySelector('input[name="mode"]:checked')?.value === 'ai';
+  playerRole = document.querySelector('input[name="player"]:checked')?.value || 'X';
   computerRole = playerRole === 'X' ? 'O' : 'X';
 }
 
-/* Panels: toggle/close/on outside click/Escape */
-function closeAllPanels(){
-  if (panelSettings) panelSettings.setAttribute('aria-hidden','true');
-  if (panelInfo) panelInfo.setAttribute('aria-hidden','true');
-  [navGame, navSettings, navInfo].forEach(b => { if (b) { b.classList.remove('active'); b.setAttribute('aria-pressed','false'); }});
-  navGame.classList.add('active'); navGame.setAttribute('aria-pressed','true');
-}
-function togglePanel(panelEl, navBtn){
-  if (!panelEl || !navBtn) return;
-  const open = panelEl.getAttribute('aria-hidden') === 'false';
-  if (open) {
-    panelEl.setAttribute('aria-hidden','true'); navBtn.classList.remove('active'); navBtn.setAttribute('aria-pressed','false'); navGame.classList.add('active'); navGame.setAttribute('aria-pressed','true');
-  } else {
-    if (panelSettings) panelSettings.setAttribute('aria-hidden','true');
-    if (panelInfo) panelInfo.setAttribute('aria-hidden','true');
-    panelEl.setAttribute('aria-hidden','false'); [navGame, navSettings, navInfo].forEach(b => { if (b) { b.classList.remove('active'); b.setAttribute('aria-pressed','false'); }});
-    navBtn.classList.add('active'); navBtn.setAttribute('aria-pressed','true');
+/* Apply settings button handler */
+applySettingsBtn?.addEventListener('click', ()=>{
+  // lang
+  const selLang = document.querySelector('input[name="lang"]:checked')?.value;
+  if (selLang) {
+    currentLang = selLang;
+    localStorage.setItem('ttt_lang', selLang);
+    loadTranslations(currentLang);
   }
-}
-
-/* click handlers */
-navGame?.addEventListener('click', ()=> { closeAllPanels(); });
-navSettings?.addEventListener('click', ()=> togglePanel(panelSettings, navSettings));
-navInfo?.addEventListener('click', ()=> togglePanel(panelInfo, navInfo));
-closeSettingsBtn?.addEventListener('click', ()=> { panelSettings.setAttribute('aria-hidden','true'); navSettings.classList.remove('active'); navSettings.setAttribute('aria-pressed','false'); navGame.classList.add('active'); navGame.setAttribute('aria-pressed','true'); });
-closeInfoBtn?.addEventListener('click', ()=> { panelInfo.setAttribute('aria-hidden','true'); navInfo.classList.remove('active'); navInfo.setAttribute('aria-pressed','false'); navGame.classList.add('active'); navGame.setAttribute('aria-pressed','true'); });
-
-document.addEventListener('click', (e) => {
-  // if click inside panel or on nav -> ignore
-  const target = e.target;
-  if (panelSettings && panelSettings.contains(target)) return;
-  if (panelInfo && panelInfo.contains(target)) return;
-  if (navSettings && navSettings.contains(target)) return;
-  if (navInfo && navInfo.contains(target)) return;
-  if (navGame && navGame.contains(target)) return;
-  // otherwise close panels if any open
-  if ((panelSettings && panelSettings.getAttribute('aria-hidden') === 'false') || (panelInfo && panelInfo.getAttribute('aria-hidden') === 'false')) {
-    closeAllPanels();
-  }
+  // theme
+  const selTheme = document.querySelector('input[name="theme"]:checked')?.value || 'light';
+  applyTheme(selTheme);
+  // Apply other settings
+  readSettingsToState();
+  resetGame();
+  closePanel(panelSettings);
 });
-document.addEventListener('keydown', (e)=> { if (e.key === 'Escape') closeAllPanels(); });
 
-/* Wire cells & keyboard */
-cells.forEach(c => {
+/* panel open/close */
+function openPanel(panel){
+  panel.setAttribute('aria-hidden', 'false');
+}
+function closePanel(panel){
+  panel.setAttribute('aria-hidden', 'true');
+}
+
+/* Bottom nav logic */
+function clearNavActive(){
+  [navGame, navSettings, navInfo].forEach(b=> {
+    b.classList.remove('active');
+    b.setAttribute('aria-pressed', 'false');
+  });
+}
+navGame?.addEventListener('click', ()=>{
+  clearNavActive();
+  navGame.classList.add('active'); navGame.setAttribute('aria-pressed','true');
+  closePanel(panelSettings); closePanel(panelInfo);
+});
+navSettings?.addEventListener('click', ()=>{
+  clearNavActive();
+  navSettings.classList.add('active'); navSettings.setAttribute('aria-pressed','true');
+  openPanel(panelSettings); closePanel(panelInfo);
+});
+navInfo?.addEventListener('click', ()=>{
+  clearNavActive();
+  navInfo.classList.add('active'); navInfo.setAttribute('aria-pressed','true');
+  openPanel(panelInfo); closePanel(panelSettings);
+});
+closeSettingsBtn?.addEventListener('click', ()=>{ closePanel(panelSettings); clearNavActive(); navGame.classList.add('active'); navGame.setAttribute('aria-pressed','true'); });
+closeInfoBtn?.addEventListener('click', ()=>{ closePanel(panelInfo); clearNavActive(); navGame.classList.add('active'); navGame.setAttribute('aria-pressed','true'); });
+
+/* keyboard support for cells */
+cells.forEach(c=>{
   c.addEventListener('click', handleCellClick);
-  c.addEventListener('keydown', (e)=> {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCellClick({ currentTarget: c }); }
+  c.addEventListener('keydown', (e)=>{
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault(); handleCellClick({ currentTarget: c });
+    }
   });
 });
 
-/* reset & undo */
-resetBtn?.addEventListener('click', resetGame);
-undoBtn?.addEventListener('click', undoMove);
+/* reset & undo handlers */
+resetBtn.addEventListener('click', resetGame);
+undoBtn.addEventListener('click', undoMove);
 
-/* segmented wiring */
-wireSegmentedControls();
-
-/* INIT */
+/* initial boot */
 (async function init(){
-  // load languages list
-  await loadLangList();
-  renderLanguageButtons();
+  // load translations
+  await loadTranslations(currentLang);
+  // set language radios UI
+  const langRadio = document.querySelector(`input[name="lang"][value="${currentLang}"]`);
+  if (langRadio) langRadio.checked = true;
 
-  // set initial pressed states from localStorage or defaults
-  // mode
-  const savedMode = localStorage.getItem('ttt_mode') || 'ai';
-  const modeBtn = document.querySelector(`.segmented[data-group="mode"] .seg-btn[data-value="${savedMode}"]`);
-  if (modeBtn) modeBtn.setAttribute('aria-pressed','true');
+  // pull saved theme into inputs
+  const curTheme = localStorage.getItem('ttt_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const themeRadio = document.querySelector(`input[name="theme"][value="${curTheme}"]`);
+  if (themeRadio) themeRadio.checked = true;
 
-  // player
-  const savedPlayer = localStorage.getItem('ttt_player') || 'X';
-  const playerBtn = document.querySelector(`.segmented[data-group="player"] .seg-btn[data-value="${savedPlayer}"]`);
-  if (playerBtn) playerBtn.setAttribute('aria-pressed','true');
+  // show/hide firstMove depending on aiMode radio initial
+  const mode = document.querySelector('input[name="mode"]:checked')?.value || 'ai';
+  document.getElementById('firstMoveRow').style.display = (mode === 'ai') ? 'block' : 'none';
+  // attach change listeners to mode radio to show/hide
+  document.querySelectorAll('input[name="mode"]').forEach(r=>{
+    r.addEventListener('change', (e)=> {
+      const val = e.target.value;
+      document.getElementById('firstMoveRow').style.display = (val === 'ai') ? 'block' : 'none';
+    });
+  });
 
-  // theme
-  const savedTheme = localStorage.getItem('ttt_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  const themeBtn = document.querySelector(`.segmented[data-group="theme"] .seg-btn[data-value="${savedTheme}"]`);
-  if (themeBtn) themeBtn.setAttribute('aria-pressed','true');
-  applyTheme(savedTheme);
+  // set language of title
+  document.getElementById('appTitle').textContent = translations.gameTitle || document.getElementById('appTitle').textContent;
 
-  // startOrder
-  const savedStart = localStorage.getItem('ttt_start') || 'player';
-  const startBtn = document.querySelector(`.segmented[data-group="startOrder"] .seg-btn[data-value="${savedStart}"]`);
-  if (startBtn) startBtn.setAttribute('aria-pressed','true');
+  // initial settings read
+  readSettingsToState();
 
-  // show/hide firstMoveRow
-  const curMode = document.querySelector('.segmented[data-group="mode"] .seg-btn[aria-pressed="true"]')?.dataset.value || savedMode;
-  firstMoveRow.style.display = curMode === 'ai' ? 'block' : 'none';
+  // if there is saved language in storage, ensure radio selected
+  const storedLang = localStorage.getItem('ttt_lang');
+  if (storedLang) {
+    const r = document.querySelector(`input[name="lang"][value="${storedLang}"]`);
+    if (r) r.checked = true;
+  }
 
-  // load translations for currentLang
-  const langObj = availableLangs.find(l => l.code === currentLang) || availableLangs[0] || {code:'ru', file:'ru.json'};
-  await loadTranslations(currentLang, langObj.file);
+  // set nav initial active
+  clearNavActive();
+  navGame?.classList.add('active'); navGame?.setAttribute('aria-pressed','true');
 
-  // set repo text if available
-  if (repoLink && translations['repo']) repoLink.textContent = translations['repo'];
-  // set created by label if translation present
-  const createdEls = document.querySelectorAll('[data-i18n="createdByLabel"]');
-  createdEls.forEach(e => { if (translations['createdByLabel']) e.textContent = translations['createdByLabel']; });
-  // set version label translations if present
-  const verEls = document.querySelectorAll('[data-i18n="version"]');
-  verEls.forEach(e => { if (translations['version']) e.textContent = translations['version']; });
-
-  // read settings
-  readSettingsFromUI();
-
-  // start
+  // initial reset
   resetGame();
 })();
