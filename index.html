@@ -5,27 +5,35 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Крестики-нолики — Liquid Glass</title>
 
-  <!-- стили -->
   <link rel="stylesheet" href="styles.css" />
-
-  <!-- конфиг (версия) -->
   <script src="config.js"></script>
 </head>
 <body>
-  <!-- Фоновая декоративная анимация (liquid) -->
+  <!-- Живой жидкий фон 2025 -->
   <div class="liquid-bg" aria-hidden="true">
     <svg class="liquid-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
       <defs>
         <filter id="liquidTurb">
-          <feTurbulence baseFrequency="0.009 0.01" numOctaves="2" seed="2" result="t" />
-          <feDisplacementMap in="SourceGraphic" in2="t" scale="10" xChannelSelector="R" yChannelSelector="G"/>
+          <feTurbulence type="fractalNoise" baseFrequency="0.012 0.015" numOctaves="5" seed="1">
+            <animate attributeName="baseFrequency" values="0.012 0.015;0.008 0.010;0.015 0.020;0.012 0.015" dur="25s" repeatCount="indefinite"/>
+            <animate attributeName="seed" values="1;40;1" dur="18s" repeatCount="indefinite"/>
+          </feTurbulence>
+          <feDisplacementMap in="SourceGraphic" in2="t" scale="30" xChannelSelector="R" yChannelSelector="G"/>
         </filter>
+
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#ff6ec4"/>
+          <stop offset="30%" stop-color="#7873f5"/>
+          <stop offset="55%" stop-color="#3a86ff"/>
+          <stop offset="80%" stop-color="#00f6ff"/>
+          <stop offset="100%" stop-color="#7fffd4"/>
+          <animateTransform attributeName="gradientTransform" type="rotate" from="0 400 300" to="360 400 300" dur="40s" repeatCount="indefinite"/>
+        </linearGradient>
       </defs>
       <rect width="100%" height="100%" fill="url(#grad1)" filter="url(#liquidTurb)"></rect>
     </svg>
   </div>
 
-  <!-- Main app shell -->
   <main class="app-shell">
     <header class="topbar glass">
       <div class="brand">
@@ -39,30 +47,28 @@
         <div id="status" class="status" aria-live="polite"></div>
 
         <div class="board" role="grid" aria-label="Tic Tac Toe board">
-          <div class="cell" data-index="0" tabindex="0" role="button" aria-label="cell 0"></div>
-          <div class="cell" data-index="1" tabindex="0" role="button" aria-label="cell 1"></div>
-          <div class="cell" data-index="2" tabindex="0" role="button" aria-label="cell 2"></div>
-          <div class="cell" data-index="3" tabindex="0" role="button" aria-label="cell 3"></div>
-          <div class="cell" data-index="4" tabindex="0" role="button" aria-label="cell 4"></div>
-          <div class="cell" data-index="5" tabindex="0" role="button" aria-label="cell 5"></div>
-          <div class="cell" data-index="6" tabindex="0" role="button" aria-label="cell 6"></div>
-          <div class="cell" data-index="7" tabindex="0" role="button" aria-label="cell 7"></div>
-          <div class="cell" data-index="8" tabindex="0" role="button" aria-label="cell 8"></div>
+          <div class="cell liquid-interaction" data-index="0" tabindex="0" role="button" aria-label="cell 0"></div>
+          <div class="cell liquid-interaction" data-index="1" tabindex="0" role="button" aria-label="cell 1"></div>
+          <div class="cell liquid-interaction" data-index="2" tabindex="0" role="button" aria-label="cell 2"></div>
+          <div class="cell liquid-interaction" data-index="3" tabindex="0" role="button" aria-label="cell 3"></div>
+          <div class="cell liquid-interaction" data-index="4" tabindex="0" role="button" aria-label="cell 4"></div>
+          <div class="cell liquid-interaction" data-index="5" tabindex="0" role="button" aria-label="cell 5"></div>
+          <div class="cell liquid-interaction" data-index="6" tabindex="0" role="button" aria-label="cell 6"></div>
+          <div class="cell liquid-interaction" data-index="7" tabindex="0" role="button" aria-label="cell 7"></div>
+          <div class="cell liquid-interaction" data-index="8" tabindex="0" role="button" aria-label="cell 8"></div>
         </div>
 
         <div class="board-controls">
-          <button id="resetBtn" class="btn primary" data-i18n="restart">Начать заново</button>
-          <button id="undoBtn" class="btn" title="Undo" aria-label="Undo" hidden>↶</button>
+          <button id="resetBtn" class="btn primary liquid-interaction" data-i18n="restart">Начать заново</button>
+          <button id="undoBtn" class="btn liquid-interaction" title="Undo" aria-label="Undo" hidden>↶</button>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Bottom navigation (Liquid Glass toolbar) -->
+  <!-- Bottom navigation -->
   <nav class="bottom-nav glass" role="navigation" aria-label="Main navigation">
-    <!-- Game (active by default) -->
-    <button id="nav-game" class="nav-btn active" aria-pressed="true" title="Game">
-      <!-- Animated grid icon (SVG) -->
+    <button id="nav-game" class="nav-btn liquid-interaction active" aria-pressed="true" title="Game">
       <svg class="icon icon-game" viewBox="0 0 24 24" aria-hidden="true">
         <g stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none">
           <rect x="3" y="3" width="18" height="18" rx="3"></rect>
@@ -72,9 +78,7 @@
       <span class="nav-label" data-i18n="play">Игра</span>
     </button>
 
-    <!-- Settings -->
-    <button id="nav-settings" class="nav-btn" aria-pressed="false" title="Settings">
-      <!-- Animated gear SVG -->
+    <button id="nav-settings" class="nav-btn liquid-interaction" aria-pressed="false" title="Settings">
       <svg class="icon icon-gear" viewBox="0 0 24 24" aria-hidden="true">
         <path class="gear" d="M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
         <g class="gear-teeth" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
@@ -84,9 +88,7 @@
       <span class="nav-label" data-i18n="settings">Настройки</span>
     </button>
 
-    <!-- Info -->
-    <button id="nav-info" class="nav-btn" aria-pressed="false" title="Info">
-      <!-- Animated info SVG -->
+    <button id="nav-info" class="nav-btn liquid-interaction" aria-pressed="false" title="Info">
       <svg class="icon icon-info" viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/>
         <path d="M12 8v.01M11 11h2v5h-2z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
@@ -95,7 +97,7 @@
     </button>
   </nav>
 
-  <!-- Sliding panels (settings & info) — hidden by default -->
+  <!-- Панели -->
   <aside id="panel-settings" class="panel-slide glass" aria-hidden="true" role="dialog" aria-label="Settings panel">
     <h3 data-i18n="settings">Настройки</h3>
 
@@ -140,8 +142,8 @@
     </div>
 
     <div class="actions-row">
-      <button id="applySettings" class="btn primary" data-i18n="apply">Применить</button>
-      <button id="closeSettings" class="btn" data-i18n="close">Закрыть</button>
+      <button id="applySettings" class="btn primary liquid-interaction" data-i18n="apply">Применить</button>
+      <button id="closeSettings" class="btn liquid-interaction" data-i18n="close">Закрыть</button>
     </div>
   </aside>
 
@@ -151,11 +153,10 @@
     <p><strong data-i18n="version">Версия</strong>: <span id="appVersion">v1.0.0</span></p>
     <p><a id="repoLink" href="https://github.com/mister-admin/tic-tac-toe" target="_blank" rel="noopener">GitHub / исходники</a></p>
     <div class="actions-row">
-      <button id="closeInfo" class="btn" data-i18n="close">Закрыть</button>
+      <button id="closeInfo" class="btn liquid-interaction" data-i18n="close">Закрыть</button>
     </div>
   </aside>
 
-  <!-- Основной скрипт -->
   <script src="script.js"></script>
 </body>
 </html>
